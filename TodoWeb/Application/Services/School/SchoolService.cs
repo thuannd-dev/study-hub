@@ -18,6 +18,7 @@ namespace TodoWeb.Application.Services.School
         public IEnumerable<SchoolViewModel> GetSchools(int? schoolId)
         {
             var query = _context.School
+                .Where(school => school.Status != Constants.Enums.Status.Deleted)
                 .AsQueryable();//build leen 1 cau query
 
             if (schoolId.HasValue)
@@ -57,8 +58,15 @@ namespace TodoWeb.Application.Services.School
                 Name = school.Name,
                 Address = school.Address,
             };
+            var state = _context.Entry(data).State;
             _context.School.Add(data);
+            //_context.Entry(data).State = EntityState.Added;
+            state = _context.Entry(data).State;
             _context.SaveChanges();
+            state = _context.Entry(data).State;
+            data.Address = "123";
+            state = _context.Entry(data).State;
+            _context.School.Add(data);
             return data.Id;
         }
 
@@ -66,7 +74,7 @@ namespace TodoWeb.Application.Services.School
         {
             var data = _context.School.Find(school.Id);
             //tìm student
-            if (data == null)
+            if (data == null || data.Status == Constants.Enums.Status.Deleted)
             {
                 return -1;
             }
@@ -86,13 +94,39 @@ namespace TodoWeb.Application.Services.School
         public int Delete(int schoolId)
         {
             var data = _context.School.Find(schoolId);
-            if (data == null)
+            if (data == null || data.Status == Constants.Enums.Status.Deleted)
             {
                 return -1;
             }
             _context.School.Remove(data);
             _context.SaveChanges();
-            return 0;
+            return data.Id;
+        }
+
+        public SchoolStudentViewModel GetSchoolDetail(int schoolId)
+        {
+            var school = _context.School.Find(schoolId);
+            if(school == null || school.Status == Constants.Enums.Status.Deleted)
+            {
+                return null;
+            }
+            _context.Entry(school).Collection(x => x.Students).Load();
+            var students = school.Students;
+
+            return new SchoolStudentViewModel
+            {
+                Id = school.Id,
+                Name = school.Name,
+                Address = school.Address,
+                Students = students.Select(x => new Dtos.StudentModel.StudentViewModel
+                {
+                    Id = x.Id,
+                    FullName = x.FirstName + " " + x.LastName,
+                    Age = x.Age,
+                    Balance = x.Balance,
+                    SchoolName = school.Name
+                }).ToList()
+            };
         }
     }
 }

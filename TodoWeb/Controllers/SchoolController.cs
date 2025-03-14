@@ -21,6 +21,12 @@ namespace TodoWeb.Controllers
             return _schoolService.GetSchools(schoolId);
         }
 
+        [HttpGet("{id}/detail")]
+        public SchoolStudentViewModel GetSchoolsDetails(int id)
+        {
+            return _schoolService.GetSchoolDetail(id);
+        }
+
         [HttpPost]
         public int Post(SchoolViewModel school)
         {

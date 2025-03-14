@@ -31,6 +31,7 @@ namespace TodoWeb.Application.Services.Student
             //query = slect * from student 
             //join school on student.sId = School.id
             var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
                 .Include(student => student.School)//icludeQueryAble
                 .AsQueryable();//build leen 1 cau query
 
@@ -94,7 +95,7 @@ namespace TodoWeb.Application.Services.Student
         {
             //tìm student
             var data = _context.Students.Find(student.Id);
-            if (data == null)
+            if (data == null || data.Status == Constants.Enums.Status.Deleted)
             {
                 return -1;
             }
@@ -123,12 +124,13 @@ namespace TodoWeb.Application.Services.Student
             }
             _context.Students.Remove(data);
             _context.SaveChanges();
-            return 0;
+            return data.Id;
         }
 
         public StudentCourseDetailViewModel GetStudentDetails(int id)
         {
             var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
                 .Include(student => student.CourseStudent)
                 .ThenInclude(cs => cs.Course);
 

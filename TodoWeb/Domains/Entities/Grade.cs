@@ -1,4 +1,6 @@
-﻿namespace TodoWeb.Domains.Entities
+﻿using TodoWeb.Constants.Enums;
+
+namespace TodoWeb.Domains.Entities
 {
     public class Grade
     {
@@ -8,7 +10,7 @@
         public decimal? PracticalScore { get; set; }
         public decimal? FinalScore { get; set; }
         
-        public CourseStudent CourseStudent { get; set; }
+        public virtual CourseStudent CourseStudent { get; set; }
 
     }
 }

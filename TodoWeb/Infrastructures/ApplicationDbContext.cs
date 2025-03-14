@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures.DatabaseMapping;
+using TodoWeb.Infrastructures.Interceptor;
 
 namespace TodoWeb.Infrastructures
 {
@@ -16,7 +19,8 @@ namespace TodoWeb.Infrastructures
         public DbSet<School> School { get; set; }
         public DbSet<Course> Course { get; set; }
         public DbSet<Grade> Grades { get; set; }
-
+        public DbSet<AuditLog> AuditLog { get; set; }
+        public DbSet<ModifyLoggingInterceptor> CreateUpdateLoggingInterceptors;
         //constructer
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){ 
         }
@@ -24,7 +28,10 @@ namespace TodoWeb.Infrastructures
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder.UseSqlServer("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.AddInterceptors(new SqlQueryLoggingInterceptor(), new AuditLoggingInterceptor(), new ModifyLoggingInterceptor());
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,11 +63,41 @@ namespace TodoWeb.Infrastructures
                 
         }
 
-        public int SaveChange()
+        public int SaveChanges()
         {
+            //var auditLogs = new List<AuditLog>();
+            //foreach(var entity in ChangeTracker.Entries())
+            //{
+            //    var log = new AuditLog
+            //    {
+            //        EntityName = entity.Entity.GetType().Name,
+            //        CreatedAt = DateTime.Now,
+            //        Action = entity.State.ToString()
+            //    };
+            //    if(entity.State == EntityState.Added)
+            //    {
+            //        log.NewValue = JsonSerializer.Serialize(entity.CurrentValues.ToObject());
+            //    }
+            //    if (entity.State == EntityState.Modified)
+            //    {
+            //        log.OldValue = JsonSerializer.Serialize(entity.OriginalValues.ToObject());
+            //        log.NewValue = JsonSerializer.Serialize(entity.CurrentValues.ToObject());
+            //    }
+            //    if (entity.State == EntityState.Deleted)
+            //    {
+            //        log.OldValue = JsonSerializer.Serialize(entity.OriginalValues.ToObject());
+            //    }
+            //    auditLogs.Add(log);
+
+            //}
+            //AuditLog.AddRange(auditLogs);//State =  Added
             return base.SaveChanges();
         }
 
-        
+        public EntityEntry<T> Entry<T>(T entity) where T : class
+        {
+            return base.Entry(entity);
+        }
+
     }
 }

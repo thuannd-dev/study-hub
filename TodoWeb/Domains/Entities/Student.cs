@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TodoWeb.Constants.Enums;
 
 namespace TodoWeb.Domains.Entities
 {
     [Table("Students")]
-    public class Student
+    public class Student : IDelete
     {
         [Key]//define primary key cua table, identity (ko the dinh nghia id)
         [DatabaseGenerated(DatabaseGeneratedOption.None)]//none có nghĩa là khóa chính dễ dãi, cho làm mọi thứ, có thể chỉnh id
@@ -36,8 +37,12 @@ namespace TodoWeb.Domains.Entities
 
         [ForeignKey("School")]
         public int SId { get; set; }
-        public School School { get; set; }
+        public virtual School School { get; set; }
 
-        public ICollection<CourseStudent> CourseStudent { get; set; }
+        public virtual ICollection<CourseStudent> CourseStudent { get; set; }
+
+        public Status Status { get; set; }
+        public Role? DeleteBy { get; set; }
+        public DateTime? DeleteAt { get; set; }
     }
 }

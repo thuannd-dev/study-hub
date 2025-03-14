@@ -23,13 +23,16 @@ namespace TodoWeb.Application.Services.Course
 
             //build lên một câu query 
             var query = _context.Course.AsQueryable();
+            //var query = _context.Course.AsNoTracking().AsQueryable(); asnotracking thì tk entity nó sẽ ko check cái entity này nữa
+            //=> tăng performance cho app nhưng khi modified sẽ không lưu được xuống database
             //nếu courseId có giá trị thì lấy ra đúng course với id đó
             if (courseId.HasValue)
             {
                 query = query.Where(course => course.Id == courseId);
                 if (query.Count() == 0) return null;
             }
-            return query.Select(course => new CourseViewModel
+            return query.Where(course => course.Status != Constants.Enums.Status.Deleted)
+                .Select(course => new CourseViewModel
             {
                 CourseId = course.Id,
                 CourseName = course.Name,
@@ -58,7 +61,7 @@ namespace TodoWeb.Application.Services.Course
         {
             //kiểm tra xem có id hay không
             var oldCourse = _context.Course.Find(course.CourseId);
-            if (oldCourse == null)
+            if (oldCourse == null || oldCourse.Status == Constants.Enums.Status.Deleted)
             {
                 return -1;
             }
@@ -96,7 +99,8 @@ namespace TodoWeb.Application.Services.Course
                 if (query.Count() == 0) return null;
             }
             //join
-            query = query.Include(course => course.CourseStudent)
+            query = query.Where(course => course.Status != Constants.Enums.Status.Deleted)
+                .Include(course => course.CourseStudent)
                 .ThenInclude(courseStudent => courseStudent.Student);
             return query.Select(course => new CourseStudentDetailViewModel
             {
