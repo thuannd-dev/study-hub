@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
-using TodoWeb.Application.Services.Student;
+using TodoWeb.Application.Services.Students;
 using TodoWeb.Domains.Entities;
 
 namespace TodoWeb.Controllers

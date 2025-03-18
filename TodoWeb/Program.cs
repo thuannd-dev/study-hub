@@ -1,10 +1,13 @@
 ﻿using TodoWeb.Application.Dtos.GuidModel;
+using TodoWeb.Application.MapperProfiles;
 using TodoWeb.Application.Services;
-using TodoWeb.Application.Services.Course;
-using TodoWeb.Application.Services.CourseStudent;
+using TodoWeb.Application.Services.Courses;
+using TodoWeb.Application.Services.CourseStudents;
+using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Application.Services.Grade;
 using TodoWeb.Application.Services.School;
-using TodoWeb.Application.Services.Student;
+using TodoWeb.Application.Services.Students;
+using TodoWeb.Application.Services.Students;
 using TodoWeb.Infrastructures;
 //file program la file khi project build ra chay dau tien
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +31,7 @@ builder.Services.AddSingleton<GuidData>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
 builder.Services.AddScoped<ICourseStudentService, CourseStudentService>();
-
+builder.Services.AddAutoMapper(typeof(ToDoProfile));
 
 //DI Containers, IServiceProvider
 var app = builder.Build();

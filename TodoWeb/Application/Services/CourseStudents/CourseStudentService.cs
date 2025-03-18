@@ -1,16 +1,21 @@
-﻿using TodoWeb.Application.Dtos.CourseModel;
+﻿using AutoMapper;
+using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentModel;
+using TodoWeb.Application.Services.CourseStudents;
+using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
 
-namespace TodoWeb.Application.Services.CourseStudent
+namespace TodoWeb.Application.Services.CourseStudents
 {
     public class CourseStudentService : ICourseStudentService
     {
+        //inject and use Auto Mapper
         private readonly IApplicationDbContext _context;
-
-        public CourseStudentService(IApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public CourseStudentService(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public int PostCourseStudent(PostCourseStudentViewModel courseStudentViewModel)
@@ -23,11 +28,12 @@ namespace TodoWeb.Application.Services.CourseStudent
                 .FirstOrDefault(cs => cs.StudentId == courseStudentViewModel.StudentId && cs.CourseId == courseStudentViewModel.CourseId);
             if (hasCourseId != null && hasStudentId != null && hasCourseStudent == null)
             {
-                var data = new Domains.Entities.CourseStudent
-                {
-                    StudentId = courseStudentViewModel.StudentId,
-                    CourseId = courseStudentViewModel.CourseId
-                };
+                //var data = new Domains.Entities.CourseStudent
+                //{
+                //    StudentId = courseStudentViewModel.StudentId,
+                //    CourseId = courseStudentViewModel.CourseId
+                //};
+                var data = _mapper.Map<CourseStudent>(courseStudentViewModel);
                 _context.CourseStudent.Add(data);
                 _context.SaveChanges();
                 return data.Id;

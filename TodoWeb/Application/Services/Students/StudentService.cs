@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
@@ -7,17 +8,18 @@ using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
 
-namespace TodoWeb.Application.Services.Student
+namespace TodoWeb.Application.Services.Students
 {
 
 
     public class StudentService : IStudentService
     {
         private readonly IApplicationDbContext _context;
-
-        public StudentService(IApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public StudentService(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public int Delete(StudentViewModel student)
@@ -49,13 +51,16 @@ namespace TodoWeb.Application.Services.Student
             //from student 
             //join school on student.schoolId = School.id
             //Where(x => x.SId == schoolId) (depend if schoolId is not null)
-            return query.Select(x => new StudentViewModel
-            {
-                Id = x.Id,
-                FullName = x.FirstName + " " + x.LastName,
-                Age = x.Age,
-                SchoolName = x.School.Name,
-            }).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
+            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            return result;
+
+            //return query.Select(x => new StudentViewModel
+            //{
+            //    Id = x.Id,
+            //    FullName = x.FirstName + " " + x.LastName,
+            //    Age = x.Age,
+            //    SchoolName = x.School.Name,
+            //}).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
             //chua to list thif se build tren memory
         }
 
@@ -106,11 +111,19 @@ namespace TodoWeb.Application.Services.Student
             {
                 return -1;
             }
-            data.FirstName = name[0];
-            data.LastName = string.Join(" ", name.Skip(1));
-            data.SId = school.Id;
-            data.School = school;
-            data.Balance = student.Balance;
+            //data.FirstName = name[0];
+            //data.LastName = string.Join(" ", name.Skip(1));
+            //data.SId = school.Id;
+            //data.School = school;
+            //data.Balance = student.Balance;
+            _mapper.Map(student, data)
+                .FirstName = name[0];
+            _mapper.Map(student, data)
+                .LastName = string.Join(" ", name.Skip(1));
+            _mapper.Map(student, data)
+                .SId = school.Id;
+            _mapper.Map(student, data)
+                .School = school;
             _context.SaveChanges();
             return data.Id;
         }
@@ -140,17 +153,20 @@ namespace TodoWeb.Application.Services.Student
             {
                 return null;
             }
+            //projectto dùng khi muốn map một câu query
+            //còn map thì dùng khi muốn map một object
+            return _mapper.Map<StudentCourseDetailViewModel>(student);
 
-            return new StudentCourseDetailViewModel
-            {
-                StudentId = student.Id,
-                StudentName = student.FirstName + " " + student.LastName,
-                Courses = student.CourseStudent.Select(cs => new CourseViewModel
-                {
-                    CourseId = cs.CourseId,
-                    CourseName = cs.Course.Name
-                }).ToList()
-            };
+            //return new StudentCourseDetailViewModel
+            //{
+            //    StudentId = student.Id,
+            //    StudentName = student.FirstName + " " + student.LastName,
+            //    Courses = student.CourseStudent.Select(cs => new CourseViewModel
+            //    {
+            //        CourseId = cs.CourseId,
+            //        CourseName = cs.Course.Name
+            //    }).ToList()
+            //};
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
 
-namespace TodoWeb.Application.Services.Course
+namespace TodoWeb.Application.Services.Courses
 {
     public class CourseService : ICourseService
     {
@@ -12,10 +13,11 @@ namespace TodoWeb.Application.Services.Course
         //từ đó class có phiên làm việc với cơ sở dữ liệu cho riêng mình
 
         private readonly IApplicationDbContext _context;
-
-        public CourseService(IApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public CourseService(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         public IEnumerable<CourseViewModel> GetCourses(int? courseId)//ở đây không phải hiểu là hàm có nhận vào giá trị hay không đều được
                                                                      //mà phải hiểu là hàm nhận vào giá trị khác null hoặc là null
@@ -31,13 +33,26 @@ namespace TodoWeb.Application.Services.Course
                 query = query.Where(course => course.Id == courseId);
                 if (query.Count() == 0) return null;
             }
-            return query.Where(course => course.Status != Constants.Enums.Status.Deleted)
-                .Select(course => new CourseViewModel
-            {
-                CourseId = course.Id,
-                CourseName = course.Name,
-                StartDate = course.StartDate,
-            }).ToList();
+            var result = _mapper.ProjectTo<CourseViewModel>(query).ToList();
+
+            //List<Course> course = query.ToList();
+
+            ////var result = course.Select(course => _mapper.Map<CourseViewModel>(course))
+            ////    .ToList();
+
+            //var result = _mapper.Map<List<CourseViewModel>>(course);
+
+
+
+            return result;
+
+            //return query.Where(course => course.Status != Constants.Enums.Status.Deleted)
+            //    .Select(course => new CourseViewModel
+            //{
+            //    Id = course.Id,
+            //    Name = course.Name,
+            //    StartDate = course.StartDate,
+            //}).ToList();
 
         }
 
@@ -47,17 +62,18 @@ namespace TodoWeb.Application.Services.Course
             var dupCourseName = _context.Course.FirstOrDefault(c => c.Name == course.CourseName);
             if (dupCourseName != null) return -1;
             //tạo ra instance of new course
-            var data = new Domains.Entities.Course
-            {
-                Name = course.CourseName,
-                StartDate = course.StartDate,
-            };
+            //var data = new Domains.Entities.Course
+            //{
+            //    Name = course.CourseName,
+            //    StartDate = course.StartDate,
+            //};
+            var data = _mapper.Map<Course>(course);
             _context.Course.Add(data);
             _context.SaveChanges();
             return data.Id;
         }
 
-        public int Put(CourseViewModel course)
+        public int Put(CourseViewModel course)//src
         {
             //kiểm tra xem có id hay không
             var oldCourse = _context.Course.Find(course.CourseId);
@@ -69,8 +85,11 @@ namespace TodoWeb.Application.Services.Course
             var dupCourseName = _context.Course.FirstOrDefault(c => c.Name == course.CourseName);
             if (dupCourseName != null) return -1;
             //thay doi 
-            oldCourse.Name = course.CourseName;
-            oldCourse.StartDate = course.StartDate;
+            //oldCourse.Name = course.CourseName;
+            //oldCourse.StartDate = course.StartDate;
+
+            _mapper.Map(course, oldCourse);
+
             _context.SaveChanges();
             return oldCourse.Id;
         }
@@ -102,20 +121,21 @@ namespace TodoWeb.Application.Services.Course
             query = query.Where(course => course.Status != Constants.Enums.Status.Deleted)
                 .Include(course => course.CourseStudent)
                 .ThenInclude(courseStudent => courseStudent.Student);
-            return query.Select(course => new CourseStudentDetailViewModel
-            {
-                CourseId = course.Id,
-                CourseName = course.Name,
-                StartDate = course.StartDate,
-                Students = course.CourseStudent.Select(courseStudent => new Dtos.StudentModel.StudentViewModel
-                {
-                    Id = courseStudent.Student.Id,
-                    FullName = $"{courseStudent.Student.FirstName} {courseStudent.Student.LastName}",
-                    Age = courseStudent.Student.Age,
-                    Balance = courseStudent.Student.Balance,
-                    SchoolName = courseStudent.Student.School.Name,
-                }).ToList()
-            });
+            //return query.Select(course => new CourseStudentDetailViewModel
+            //{
+            //    CourseId = course.Id,
+            //    CourseName = course.Name,
+            //    StartDate = course.StartDate,
+            //    Students = course.CourseStudent.Select(courseStudent => new Dtos.StudentModel.StudentViewModel
+            //    {
+            //        Id = courseStudent.Student.Id,
+            //        FullName = $"{courseStudent.Student.FirstName} {courseStudent.Student.LastName}",
+            //        Age = courseStudent.Student.Age,
+            //        Balance = courseStudent.Student.Balance,
+            //        SchoolName = courseStudent.Student.School.Name,
+            //    }).ToList()
+            //});
+            return _mapper.ProjectTo<CourseStudentDetailViewModel>(query);
         }
     }
 }

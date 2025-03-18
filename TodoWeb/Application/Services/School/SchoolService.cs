@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
@@ -7,11 +8,13 @@ namespace TodoWeb.Application.Services.School
 {
     public class SchoolService : ISchoolService
     {
+        //inject and use IMapper
         private readonly IApplicationDbContext _context;
-
-        public SchoolService(IApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public SchoolService(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
 
@@ -26,14 +29,14 @@ namespace TodoWeb.Application.Services.School
 
                 query = query.Where(x => x.Id == schoolId);//add theem ddk 
             }
+            return _mapper.ProjectTo<SchoolViewModel>(query);
+            //return query.Select(x => new SchoolViewModel
+            //{
+            //    Id = x.Id,
+            //    Address = x.Address,
+            //    Name = x.Name,
 
-            return query.Select(x => new SchoolViewModel
-            {
-                Id = x.Id,
-                Address = x.Address,
-                Name = x.Name,
-
-            }).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
+            //}).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
             //chua to list thif se build tren memory
         }
 
@@ -53,11 +56,12 @@ namespace TodoWeb.Application.Services.School
                 return -1;
             }
 
-            var data = new Domains.Entities.School
-            {
-                Name = school.Name,
-                Address = school.Address,
-            };
+            //var data = new Domains.Entities.School
+            //{
+            //    Name = school.Name,
+            //    Address = school.Address,
+            //};
+            var data = _mapper.Map<Domains.Entities.School>(school);
             var state = _context.Entry(data).State;
             _context.School.Add(data);
             //_context.Entry(data).State = EntityState.Added;
@@ -85,8 +89,9 @@ namespace TodoWeb.Application.Services.School
             {
                 return -1;
             }
-            data.Name = school.Name;
-            data.Address = school.Address;
+            //data.Name = school.Name;
+            //data.Address = school.Address;
+            _mapper.Map(school, data);
             _context.SaveChanges();
             return data.Id;
         }
@@ -111,22 +116,25 @@ namespace TodoWeb.Application.Services.School
                 return null;
             }
             _context.Entry(school).Collection(x => x.Students).Load();
-            var students = school.Students;
+            return _mapper.Map<SchoolStudentViewModel>(school);
 
-            return new SchoolStudentViewModel
-            {
-                Id = school.Id,
-                Name = school.Name,
-                Address = school.Address,
-                Students = students.Select(x => new Dtos.StudentModel.StudentViewModel
-                {
-                    Id = x.Id,
-                    FullName = x.FirstName + " " + x.LastName,
-                    Age = x.Age,
-                    Balance = x.Balance,
-                    SchoolName = school.Name
-                }).ToList()
-            };
+            //lấy ra học sinh
+            //var students = school.Students;
+
+            //return new SchoolStudentViewModel
+            //{
+            //    Id = school.Id,
+            //    Name = school.Name,
+            //    Address = school.Address,
+            //    Students = students.Select(x => new Dtos.StudentModel.StudentViewModel
+            //    {
+            //        Id = x.Id,
+            //        FullName = x.FirstName + " " + x.LastName,
+            //        Age = x.Age,
+            //        Balance = x.Balance,
+            //        SchoolName = school.Name
+            //    }).ToList()
+            //};
         }
     }
 }

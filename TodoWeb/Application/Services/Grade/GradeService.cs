@@ -1,28 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.GradeStudentModel;
-using TodoWeb.Application.Services.CourseStudent;
+using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
-
+using TodoWeb.Domains.Entities;
 namespace TodoWeb.Application.Services.Grade
 {
     public class GradeService : IGradeService
     {
+        //inject and use AutoMapper
         private readonly IApplicationDbContext _context;
         private readonly ICourseStudentService _courseStudentService;
-        public GradeService(IApplicationDbContext context, ICourseStudentService courseStudentService)
+        private readonly IMapper _mapper;
+        public GradeService(IApplicationDbContext context, ICourseStudentService courseStudentService, IMapper mapper)
         {
             _context = context;
             _courseStudentService = courseStudentService;
+            _mapper = mapper;
         }
 
         public IEnumerable<StudentCourseGradeWithAverageCourseScoreViewModel> GetAverageGradeOfStudents(int? studentId)
         {
-            var data = GetGradeOfStudents(studentId, null);
-            return data.Select(studentGrade => new StudentCourseGradeWithAverageCourseScoreViewModel
-            {
-                StudentCourseGradeViewModel = studentGrade
-            });
+            return _mapper.Map<IEnumerable<StudentCourseGradeWithAverageCourseScoreViewModel>>(GetGradeOfStudents(studentId, null));
+            //var data = GetGradeOfStudents(studentId, null);
+            //return data.Select(studentGrade => new StudentCourseGradeWithAverageCourseScoreViewModel
+            //{
+            //    StudentCourseGradeViewModel = studentGrade
+            //});
         }
 
         public IEnumerable<StudentCourseGradeViewModel> GetGradeOfStudents(int? studentId, int? courseId)
@@ -47,51 +52,55 @@ namespace TodoWeb.Application.Services.Grade
             //return 
 
 
-            var query = _context.Students.AsQueryable();
+            IQueryable<Student> query;//phương thức như Include và ThenInclude được định nghĩa như là các extension method dành cho kiểu dữ liệu IQueryable<T> (phiên bản generic),
+                                      //không phải cho kiểu IQueryable không generic
             if (studentId.HasValue)
             {
-                query = query.Where(student => student.Id == studentId);
+                query = _context.Students.Where(student => student.Id == studentId);
+            } else {
+                query = _context.Students;
             }
-
-            query = query.Include(student => student.CourseStudent)
-                         .ThenInclude(cs => cs.Course);
 
             if (courseId.HasValue)
             {
-                return query.Select(student => new StudentCourseGradeViewModel
-                {
-                    StudentId = student.Id,
-                    StudentName = student.FirstName + " " + student.LastName,
+                query = query.Include(student => student.CourseStudent.Where(cs => cs.CourseId == courseId))
+                         .ThenInclude(cs => cs.Grade);
+                return _mapper.ProjectTo<StudentCourseGradeViewModel>(query);
+                //return query.Select(student => new StudentCourseGradeViewModel
+                //{
+                //    StudentId = student.Id,
+                //    StudentName = student.FirstName + " " + student.LastName,
+                //    CourseScore = student.CourseStudent.Where(course => course.CourseId == courseId)
+                //.Select(cs => new CourseGradeViewModel
+                //{
+                //    CourseId = cs.CourseId,
+                //    CourseName = cs.Course.Name,
+                //    AssignmentScore = cs.Grade.AssignmentScore,
+                //    PracticalScore = cs.Grade.PracticalScore,
+                //    FinalScore = cs.Grade.FinalScore,
 
-                    CourseScore = student.CourseStudent.Where(course => course.CourseId == courseId)
-                .Select(cs => new CourseGradeViewModel
-                {
-                    CourseId = cs.CourseId,
-                    CourseName = cs.Course.Name,
-                    AssignmentScore = cs.Grade.AssignmentScore,
-                    PracticalScore = cs.Grade.PracticalScore,
-                    FinalScore = cs.Grade.FinalScore,
-
-                }).ToList()
-                }).ToList();
+                //}).ToList()
+                //}).ToList(); 
             }
+            query = query.Include(student => student.CourseStudent)
+                         .ThenInclude(cs => cs.Grade);
+            return _mapper.ProjectTo<StudentCourseGradeViewModel>(query);
+            //return query.Select(student => new StudentCourseGradeViewModel
+            //{
+            //    StudentId = student.Id,
+            //    StudentName = student.FirstName + " " + student.LastName,
 
-            return query.Select(student => new StudentCourseGradeViewModel
-            {
-                StudentId = student.Id,
-                StudentName = student.FirstName + " " + student.LastName,
+            //    CourseScore = student.CourseStudent
+            //    .Select(cs => new CourseGradeViewModel
+            //    {
+            //        CourseId = cs.CourseId,
+            //        CourseName = cs.Course.Name,
+            //        AssignmentScore = cs.Grade.AssignmentScore,
+            //        PracticalScore = cs.Grade.PracticalScore,
+            //        FinalScore = cs.Grade.FinalScore,
 
-                CourseScore = student.CourseStudent
-                .Select(cs => new CourseGradeViewModel
-                {
-                    CourseId = cs.CourseId,
-                    CourseName = cs.Course.Name,
-                    AssignmentScore = cs.Grade.AssignmentScore,
-                    PracticalScore = cs.Grade.PracticalScore,
-                    FinalScore = cs.Grade.FinalScore,
-
-                }).ToList()
-            }).ToList();
+            //    }).ToList()
+            //}).ToList();
             //return query.Select(student => new StudentCourseGradeViewModel
             //{
             //    StudentId = student.Id,

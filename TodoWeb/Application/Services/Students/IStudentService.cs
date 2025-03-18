@@ -2,7 +2,7 @@
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Domains.Entities;
 
-namespace TodoWeb.Application.Services.Student
+namespace TodoWeb.Application.Services.Students
 {
     public interface IStudentService
     {

@@ -1,6 +1,6 @@
 ﻿using TodoWeb.Application.Dtos.CourseStudentModel;
 
-namespace TodoWeb.Application.Services.CourseStudent
+namespace TodoWeb.Application.Services.CourseStudents
 {
     public interface ICourseStudentService
     {
