@@ -12,8 +12,8 @@ using TodoWeb.Infrastructures;
 namespace TodoWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250313034816_addIDelete")]
-    partial class addIDelete
+    [Migration("20250321154818_newDatabase")]
+    partial class newDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,15 +110,6 @@ namespace TodoWeb.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
@@ -130,6 +121,148 @@ namespace TodoWeb.Migrations
                         .IsUnique();
 
                     b.ToTable("CourseStudent");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.Exam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeleteBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdateBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Exams");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("ExamQuestions");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseStudentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("FinalScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdateBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseStudentId");
+
+                    b.HasIndex("ExamId");
+
+                    b.ToTable("ExamSubmissions");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamSubmissionDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChosenAnswer")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExamSubmissionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamSubmissionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("ExamSubmissionDetails");
                 });
 
             modelBuilder.Entity("TodoWeb.Domains.Entities.Grade", b =>
@@ -146,20 +279,11 @@ namespace TodoWeb.Migrations
                     b.Property<int>("CourseStudentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("FinalScore")
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<decimal?>("PracticalScore")
                         .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -167,6 +291,57 @@ namespace TodoWeb.Migrations
                         .IsUnique();
 
                     b.ToTable("Grades");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CorrectAnswer")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OptionA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionB")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionD")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdateBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("TodoWeb.Domains.Entities.School", b =>
@@ -181,9 +356,18 @@ namespace TodoWeb.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DeleteAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeleteBy")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -280,6 +464,74 @@ namespace TodoWeb.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("TodoWeb.Domains.Entities.Exam", b =>
+                {
+                    b.HasOne("TodoWeb.Domains.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamQuestion", b =>
+                {
+                    b.HasOne("TodoWeb.Domains.Entities.Exam", "Exam")
+                        .WithMany("ExamQuestions")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TodoWeb.Domains.Entities.Question", "Question")
+                        .WithMany("ExamQuestions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamSubmission", b =>
+                {
+                    b.HasOne("TodoWeb.Domains.Entities.CourseStudent", "CourseStudent")
+                        .WithMany("ExamSubmissions")
+                        .HasForeignKey("CourseStudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TodoWeb.Domains.Entities.Exam", "Exam")
+                        .WithMany("ExamSubmissions")
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseStudent");
+
+                    b.Navigation("Exam");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamSubmissionDetail", b =>
+                {
+                    b.HasOne("TodoWeb.Domains.Entities.ExamSubmission", "ExamSubmission")
+                        .WithMany("ExamSubmissionDetails")
+                        .HasForeignKey("ExamSubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TodoWeb.Domains.Entities.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamSubmission");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("TodoWeb.Domains.Entities.Grade", b =>
                 {
                     b.HasOne("TodoWeb.Domains.Entities.CourseStudent", "CourseStudent")
@@ -309,8 +561,27 @@ namespace TodoWeb.Migrations
 
             modelBuilder.Entity("TodoWeb.Domains.Entities.CourseStudent", b =>
                 {
+                    b.Navigation("ExamSubmissions");
+
                     b.Navigation("Grade")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.Exam", b =>
+                {
+                    b.Navigation("ExamQuestions");
+
+                    b.Navigation("ExamSubmissions");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.ExamSubmission", b =>
+                {
+                    b.Navigation("ExamSubmissionDetails");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.Question", b =>
+                {
+                    b.Navigation("ExamQuestions");
                 });
 
             modelBuilder.Entity("TodoWeb.Domains.Entities.School", b =>

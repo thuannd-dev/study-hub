@@ -116,14 +116,7 @@ namespace TodoWeb.Application.Services.Students
             //data.SId = school.Id;
             //data.School = school;
             //data.Balance = student.Balance;
-            _mapper.Map(student, data)
-                .FirstName = name[0];
-            _mapper.Map(student, data)
-                .LastName = string.Join(" ", name.Skip(1));
-            _mapper.Map(student, data)
-                .SId = school.Id;
-            _mapper.Map(student, data)
-                .School = school;
+            _mapper.Map(student, data);
             _context.SaveChanges();
             return data.Id;
         }

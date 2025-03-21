@@ -20,6 +20,12 @@ namespace TodoWeb.Infrastructures
         public DbSet<Course> Course { get; set; }
         public DbSet<Grade> Grades { get; set; }
         public DbSet<AuditLog> AuditLog { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Exam> Exams { get; set; }
+        public DbSet<ExamQuestion> ExamQuestions { get; set; }
+        public DbSet<ExamSubmission> ExamSubmissions { get; set; }
+        public DbSet<ExamSubmissionDetail> ExamSubmissionDetails { get; set; }
+
         public DbSet<ModifyLoggingInterceptor> CreateUpdateLoggingInterceptors;
         //constructer
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){ 
@@ -29,7 +35,7 @@ namespace TodoWeb.Infrastructures
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseLazyLoadingProxies();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp1;Trusted_Connection=True;TrustServerCertificate=True");
             optionsBuilder.AddInterceptors(new SqlQueryLoggingInterceptor(), new AuditLoggingInterceptor(), new ModifyLoggingInterceptor());//add theo thứ tự nào thì code mình sẽ chạy theo thứ tự như thế đấy
 
 
@@ -58,6 +64,9 @@ namespace TodoWeb.Infrastructures
             modelBuilder.ApplyConfiguration(new CourseStudentMapping());
             modelBuilder.ApplyConfiguration(new CourseMapping());
             modelBuilder.ApplyConfiguration(new GradeMapping());
+            modelBuilder.ApplyConfiguration(new ExamQuestionMapping());
+            modelBuilder.ApplyConfiguration(new ExamSubmissionDetailMapping());
+            modelBuilder.ApplyConfiguration(new ExamSubmissionMapping());
             base.OnModelCreating(modelBuilder);
 
             

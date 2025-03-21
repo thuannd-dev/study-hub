@@ -1390,3 +1390,6 @@ WHERE [s].[Status] <> 3 AND [s0].[Id] = @__schoolId_0
 SELECT [t].[Description], [t].[IsCompleted]
 FROM [ToDos] AS [t]
 WHERE [t].[IsCompleted] = @__isCompleted_0
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];

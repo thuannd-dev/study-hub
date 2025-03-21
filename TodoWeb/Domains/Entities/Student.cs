@@ -31,7 +31,7 @@ namespace TodoWeb.Domains.Entities
 
         public string? Address2 { get; set; }
 
-        //[NotMapped]//khong duoc map xuong database (table khonmg co column nay)
+        [NotMapped]//khong duoc map xuong database (table khonmg co column nay)
         //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Age { get; set; }//data dua vao truong dateofbirth nen khong can set
 

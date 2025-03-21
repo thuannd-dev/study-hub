@@ -10,6 +10,8 @@
 
         public virtual Student Student { get; set; }
         public virtual Grade Grade { get; set; }
+        // Navigation property đến các bài làm (ExamSubmission) của sinh viên cho khóa học này
+        public ICollection<ExamSubmission> ExamSubmissions { get; set; }
 
     }
 }
