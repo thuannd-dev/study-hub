@@ -13,7 +13,8 @@ namespace TodoWeb.Infrastructures.DatabaseMapping
 
             builder.HasOne(x => x.Exam)
                 .WithMany(x => x.ExamSubmissions)
-                .HasForeignKey(x => x.ExamId);
+                .HasForeignKey(x => x.ExamId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(es => es.CourseStudent)
             .WithMany(cs => cs.ExamSubmissions)

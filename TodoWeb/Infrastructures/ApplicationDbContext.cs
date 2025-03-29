@@ -35,7 +35,7 @@ namespace TodoWeb.Infrastructures
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseLazyLoadingProxies();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp1;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp;Trusted_Connection=True;TrustServerCertificate=True");
             optionsBuilder.AddInterceptors(new SqlQueryLoggingInterceptor(), new AuditLoggingInterceptor(), new ModifyLoggingInterceptor());//add theo thứ tự nào thì code mình sẽ chạy theo thứ tự như thế đấy
 
 
@@ -55,9 +55,16 @@ namespace TodoWeb.Infrastructures
             //    .HasMany(course => course.CourseStudent)
             //    .WithOne(courseStudent => courseStudent.Course)
             //    .HasForeignKey(courseStudent => courseStudent.CourseId);
-            
+
             //modelBuilder.Entity<CourseStudent>()
             //    .HasKey(courseStudent => new { courseStudent.CourseId, courseStudent.StudentId });
+
+            //set tất cả các foreign key đều là restrict thay vì là cascade delete
+
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             modelBuilder.ApplyConfiguration(new StudentMapping());
             modelBuilder.ApplyConfiguration(new CourseMapping());

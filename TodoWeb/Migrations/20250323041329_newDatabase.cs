@@ -241,7 +241,7 @@ namespace TodoWeb.Migrations
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

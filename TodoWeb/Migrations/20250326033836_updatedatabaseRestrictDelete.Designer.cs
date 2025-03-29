@@ -12,8 +12,8 @@ using TodoWeb.Infrastructures;
 namespace TodoWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250321154818_newDatabase")]
-    partial class newDatabase
+    [Migration("20250326033836_updatedatabaseRestrictDelete")]
+    partial class updatedatabaseRestrictDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -450,13 +450,13 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.Course", "Course")
                         .WithMany("CourseStudent")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TodoWeb.Domains.Entities.Student", "Student")
                         .WithMany("CourseStudent")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -469,7 +469,7 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.Course", "Course")
                         .WithMany()
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -480,13 +480,13 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.Exam", "Exam")
                         .WithMany("ExamQuestions")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TodoWeb.Domains.Entities.Question", "Question")
                         .WithMany("ExamQuestions")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Exam");
@@ -499,13 +499,13 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.CourseStudent", "CourseStudent")
                         .WithMany("ExamSubmissions")
                         .HasForeignKey("CourseStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TodoWeb.Domains.Entities.Exam", "Exam")
                         .WithMany("ExamSubmissions")
                         .HasForeignKey("ExamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CourseStudent");
@@ -518,13 +518,13 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.ExamSubmission", "ExamSubmission")
                         .WithMany("ExamSubmissionDetails")
                         .HasForeignKey("ExamSubmissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TodoWeb.Domains.Entities.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ExamSubmission");
@@ -537,7 +537,7 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.CourseStudent", "CourseStudent")
                         .WithOne("Grade")
                         .HasForeignKey("TodoWeb.Domains.Entities.Grade", "CourseStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CourseStudent");
@@ -548,7 +548,7 @@ namespace TodoWeb.Migrations
                     b.HasOne("TodoWeb.Domains.Entities.School", "School")
                         .WithMany("Students")
                         .HasForeignKey("SId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("School");
