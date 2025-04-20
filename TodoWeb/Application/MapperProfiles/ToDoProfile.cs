@@ -3,6 +3,7 @@ using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.CourseStudentModel;
 using TodoWeb.Application.Dtos.GradeStudentModel;
+using TodoWeb.Application.Dtos.QuestionModel;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Domains.Entities;
@@ -87,6 +88,11 @@ namespace TodoWeb.Application.MapperProfiles
             //map từ PostCourseStudentViewModel -> CourseStudent
             CreateMap<PostCourseStudentViewModel, CourseStudent>();
 
+            //map từ Students -> StudentCourseGradeViewModel
+            CreateMap<Student, StudentCourseGradeViewModel>()
+                .ForMember(dest => dest.StudentId, config => config.MapFrom(src => src.Id))
+                .ForMember(dest => dest.StudentName, config => config.MapFrom(src => src.FirstName + " " + src.LastName))
+                .ForMember(dest => dest.CourseScore, config => config.MapFrom(src => src.CourseStudent));
 
             //map từ CourseStudent -> CourseGradeViewModel
             CreateMap<CourseStudent, CourseGradeViewModel>()
@@ -96,19 +102,17 @@ namespace TodoWeb.Application.MapperProfiles
                 .ForMember(dest => dest.PracticalScore, config => config.MapFrom(src => src.Grade.PracticalScore));
 
 
-            //map từ Students -> StudentCourseGradeViewModel
-            CreateMap<Student, StudentCourseGradeViewModel>()
-                .ForMember(dest => dest.StudentId, config => config.MapFrom(src => src.Id))
-                .ForMember(dest => dest.StudentName, config => config.MapFrom(src => src.FirstName + " " + src.LastName))
-                .ForMember(dest => dest.CourseScore, config => config.MapFrom(src => src.CourseStudent));
-            
-
-
 
             //map từ StudentCourseGradeViewModel -> StudentCourseGradeWithAverageCourseScoreViewModel
             CreateMap<StudentCourseGradeViewModel, StudentCourseGradeWithAverageCourseScoreViewModel>()
                 .ForMember(dest => dest.StudentCourseGradeViewModel, config => config.MapFrom(src => src));
+  
 
+            //CreateMap<StudentCourseGradeViewModel, StudentCourseGradeWithAverageCourseScoreViewModel>()
+            //    .ForMember(dest => dest.StudentCourseGradeViewModel, opt => opt.MapFrom(src => src))
+            //    .ForMember(dest => dest.AverageCoursesScore, opt => opt.MapFrom(src => src.CourseScore.Any()
+            //        ? src.CourseScore.Average(cs => (cs.AssignmentScore + cs.PracticalScore + cs.FinalScore) / 3)
+            //        : (decimal?)null));
 
             //map từ School -> SchoolViewModel
             CreateMap<School, SchoolViewModel>();
@@ -117,15 +121,26 @@ namespace TodoWeb.Application.MapperProfiles
             CreateMap<SchoolViewModel, School>()
                 .ForMember(dest => dest.Id, config => config.Ignore());
 
-            
-
-
             //map từ School -> SchoolStudentViewModel
             CreateMap<School, SchoolStudentViewModel>();
 
             //map từ StudentViewModel -> Student
             CreateMap<StudentViewModel, Student>();
-                
+
+            //map từ Question -> QuestionViewModel
+            CreateMap<Question, QuestionViewModel>()
+                .ForMember(dest => dest.QuestionId, config => config.MapFrom(src => src.Id));
+
+            //map từ QuestionPostModel -> Question
+            CreateMap<QuestionPostModel, Question>();
+
+            //map từ QuestionPutModel -> Question
+            CreateMap<QuestionPutModel, Question>()
+                .ForMember(dest => dest.Id, config => config.MapFrom(src => src.QuestionId));
+
+
+
+
 
 
         }

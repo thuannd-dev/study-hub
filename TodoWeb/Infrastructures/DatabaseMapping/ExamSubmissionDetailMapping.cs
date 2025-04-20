@@ -20,6 +20,10 @@ namespace TodoWeb.Infrastructures.DatabaseMapping
                 .HasOne(esd => esd.Question)
                 .WithMany() //Question có thể được tham chiếu bởi nhiều ExamSubmissionDetail
                 .HasForeignKey(esd => esd.QuestionId);
+
+
+
+
         }
     }
 }

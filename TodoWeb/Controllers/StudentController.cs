@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Application.Services.Students;
@@ -28,6 +30,23 @@ namespace TodoWeb.Controllers
         {
             return _studentService.GetStudents(schoolId);
         }
+
+        [HttpGet("SortBy/{sortBy}/Desc/{desc}/PageSize/{pageSize}/PageIndex/{pageIndex}")]
+        public IActionResult GetStudents(
+            string sortBy,
+            bool desc,
+            int pageSize,
+            int pageIndex)
+        {
+
+            var data = _studentService.GetStudents(sortBy, desc, pageSize, pageIndex);
+            if (data.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            return Ok(data);
+        }
+
 
         [HttpPost]
         public int Post(StudentViewModel student)

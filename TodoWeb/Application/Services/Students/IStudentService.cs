@@ -12,5 +12,6 @@ namespace TodoWeb.Application.Services.Students
         public int Delete(int studentID);
 
         public StudentCourseDetailViewModel GetStudentDetails(int id);
+        public IEnumerable<StudentViewModel> GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex);
     }
 }

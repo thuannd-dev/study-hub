@@ -1,10 +1,12 @@
-﻿using System.Runtime.InteropServices.Marshalling;
+﻿using System.Linq.Expressions;
+using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
+using TodoWeb.Application.Extensions;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
 
@@ -62,6 +64,38 @@ namespace TodoWeb.Application.Services.Students
             //    SchoolName = x.School.Name,
             //}).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
             //chua to list thif se build tren memory
+        }
+
+        public IEnumerable<StudentViewModel> GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex)
+        {
+            if(pageSize <= 0 || pageIndex <= 0)
+            {
+                return Enumerable.Empty<StudentViewModel>();
+            }
+            // Map sortBy string into a list of Expression selectors  
+            var sortSelectors = sortBy.ToLower()
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(f => (Expression<Func<Student, object>>)(f.Trim() switch
+                {
+                    "id" => student => student.Id,
+                    "age" => student => student.Age,
+                    "firstname" => student => student.FirstName + " " + student.LastName,
+                    "schoolname" => student => student.School.Name,
+                    "balance" => student => student.Balance,
+                    _ => student => student.Id
+
+                })).ToArray();
+
+            var query = _context.Students            
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+                .ApplySort(isDescending, sortSelectors)
+                .ApplyPaging(pageIndex, pageSize)
+                .Include(student => student.School)
+                .AsQueryable();
+
+
+            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            return result;
         }
 
         public int Post(StudentViewModel student)

@@ -15,7 +15,7 @@ namespace TodoWeb.Domains.Entities
         public DateTime SubmittedAt { get; set; }
 
         // Điểm cuối được tính theo công thức: 10 * số câu đúng / tổng số câu
-        public double FinalScore { get; set; }
+        public double? FinalScore { get; set; }
         public Role CreateBy { get; set; }
         public DateTime CreateAt { get; set; }
         public Role? UpdateBy { get; set; }

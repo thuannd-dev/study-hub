@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoWeb.Infrastructures;
 
@@ -11,9 +12,11 @@ using TodoWeb.Infrastructures;
 namespace TodoWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250414093908_updateExamQuestion")]
+    partial class updateExamQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,9 +215,8 @@ namespace TodoWeb.Migrations
                     b.Property<int>("ExamId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("FinalScore")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("float(5)");
+                    b.Property<double>("FinalScore")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("SubmittedAt")
                         .HasColumnType("datetime2");
@@ -242,7 +244,7 @@ namespace TodoWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ChosenAnswer")
+                    b.Property<int>("ChosenAnswer")
                         .HasColumnType("int");
 
                     b.Property<int>("ExamSubmissionId")
@@ -308,12 +310,6 @@ namespace TodoWeb.Migrations
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeleteAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeleteBy")
-                        .HasColumnType("int");
-
                     b.Property<string>("OptionA")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -333,9 +329,6 @@ namespace TodoWeb.Migrations
                     b.Property<string>("QuestionText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");

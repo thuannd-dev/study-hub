@@ -1,6 +1,6 @@
 ﻿namespace TodoWeb.Constants.Enums
 {
-    public enum Role
+    public enum  Role
     {
         Admin, //0
         Staff, //1

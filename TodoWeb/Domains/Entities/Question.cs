@@ -2,7 +2,7 @@
 
 namespace TodoWeb.Domains.Entities
 {
-    public class Question : ICreate, IUpdate
+    public class Question : ICreate, IUpdate, IDelete
     {
         public int Id { get; set;}
         public string QuestionText { get; set; }
@@ -15,9 +15,13 @@ namespace TodoWeb.Domains.Entities
         public DateTime CreateAt { get; set; }
         public Role? UpdateBy { get; set; }
         public DateTime? UpdateAt { get; set; }
-        public bool IsDeleted { get; set; }//mặc định là false
+
+        public Status Status { get; set; }
+        public Role? DeleteBy { get; set; }
+        public DateTime? DeleteAt { get; set; }
 
         // Navigation properties
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
+        
     }
 }

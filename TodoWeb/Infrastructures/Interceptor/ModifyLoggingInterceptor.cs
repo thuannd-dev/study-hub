@@ -40,8 +40,8 @@ namespace TodoWeb.Infrastructures.Interceptor
                         entity.DeleteAt = time;
                         entity.DeleteBy = Role.User;
                         entity.Status = Status.Deleted;
+                        entry.State = EntityState.Modified;
                     }
-                    entry.State = EntityState.Modified;
                 }
             }
             return base.SavingChanges(eventData, result);

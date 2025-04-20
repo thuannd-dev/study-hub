@@ -13,7 +13,7 @@ namespace TodoWeb.Domains.Entities
         public Question Question { get; set; }
 
         // Đáp án mà sinh viên chọn (A/B/C/D)
-        public Choice ChosenAnswer { get; set; }
+        public Choice? ChosenAnswer { get; set; }
         public bool IsCorrect { get; set; }
     }
 }
