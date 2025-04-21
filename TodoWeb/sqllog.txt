@@ -3401,3 +3401,171 @@ FROM (
 ) AS [s1]
 INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
 ORDER BY [s1].[Id]
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Age], [s].[Id]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Age], [s1].[Id]
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Age], [s].[Id]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Age], [s1].[Id]
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Balance]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Balance]
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Balance] DESC
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Balance] DESC
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Balance] DESC, [s].[Age] DESC
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Balance] DESC, [s1].[Age] DESC
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Balance], [s].[Age]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Balance], [s1].[Age]
+SELECT [c].[Id] AS [CourseId], [c].[Name] AS [CourseName], [c].[StartDate]
+FROM [Course] AS [c]
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%t%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%t%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%t%' OR LOWER([s0].[Name]) LIKE N'%t%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%t%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận nguyễn%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận nguyễn%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận nguyễn%' OR LOWER([s0].[Name]) LIKE N'%thuận nguyễn%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận nguyễn%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%fpt%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%fpt%' OR LOWER([s0].[Name]) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%fpt%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%')
+SELECT [c].[Id] AS [CourseId], [c].[Name] AS [CourseName], [c].[StartDate]
+FROM [Course] AS [c]
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%t%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%t%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%t%' OR LOWER([s0].[Name]) LIKE N'%t%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%t%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận 21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận 21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận 21%' OR LOWER([s0].[Name]) LIKE N'%thuận 21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận 21%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận 21 tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận 21 tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận 21 tuổi%' OR LOWER([s0].[Name]) LIKE N'%thuận 21 tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận 21 tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%học%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%học%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%học%' OR LOWER([s0].[Name]) LIKE N'%học%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%học%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%fpt%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%fpt%' OR LOWER([s0].[Name]) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%fpt%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%') AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%') AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%') AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%học%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%học%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%học%' OR LOWER([s0].[Name]) LIKE N'%học%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%học%') AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%fpt%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%fpt%' OR LOWER([s0].[Name]) LIKE N'%fpt%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%fpt%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%20%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%20%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%20%' OR LOWER([s0].[Name]) LIKE N'%20%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%20%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%như%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%như%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%như%' OR LOWER([s0].[Name]) LIKE N'%như%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%như%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%20%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%20%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%20%' OR LOWER([s0].[Name]) LIKE N'%20%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%20%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%đẹp%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%đẹp%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%đẹp%' OR LOWER([s0].[Name]) LIKE N'%đẹp%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%đẹp%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%trai%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%trai%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%trai%' OR LOWER([s0].[Name]) LIKE N'%trai%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%trai%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%1%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%1%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%1%' OR LOWER([s0].[Name]) LIKE N'%1%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%1%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%2%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%2%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%2%' OR LOWER([s0].[Name]) LIKE N'%2%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%2%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%3%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%3%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%3%' OR LOWER([s0].[Name]) LIKE N'%3%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%3%')

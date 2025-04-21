@@ -79,7 +79,7 @@ namespace TodoWeb.Application.Services.Students
                 {
                     "id" => student => student.Id,
                     "age" => student => student.Age,
-                    "firstname" => student => student.FirstName + " " + student.LastName,
+                    "fullname" => student => student.FirstName + " " + student.LastName,
                     "schoolname" => student => student.School.Name,
                     "balance" => student => student.Balance,
                     _ => student => student.Id
@@ -95,6 +95,38 @@ namespace TodoWeb.Application.Services.Students
 
 
             var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            return result;
+        }
+
+        public IEnumerable<StudentViewModel> SearchStudents(string searchTerm)
+        {
+            var tokens = searchTerm
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+                .Include(student => student.School)
+                .AsQueryable();
+
+            if (tokens.Length > 1)
+            {
+                query = query.ApplyRelatedSearch(searchTerm, student => student.Id.ToString(),
+                    student => student.FirstName + " " + student.LastName,
+                    student => student.Age.ToString(),
+                    student => student.School.Name,
+                    student => student.Balance.ToString());
+            }else if (tokens.Length == 1)
+            {
+                query = query.ApplySearch(searchTerm, student => student.Id.ToString(),
+                    student => student.FirstName + " " + student.LastName,
+                    student => student.Age.ToString(),
+                    student => student.School.Name,
+                    student => student.Balance.ToString());
+            }else
+            {
+                return Enumerable.Empty<StudentViewModel>();
+            }
+
+                var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
             return result;
         }
 

@@ -13,5 +13,6 @@ namespace TodoWeb.Application.Services.Students
 
         public StudentCourseDetailViewModel GetStudentDetails(int id);
         public IEnumerable<StudentViewModel> GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex);
+        public IEnumerable<StudentViewModel> SearchStudents(string searchTerm);
     }
 }
