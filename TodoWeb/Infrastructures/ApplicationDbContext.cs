@@ -116,5 +116,9 @@ namespace TodoWeb.Infrastructures
             return base.Entry(entity);
         }
 
+        public async Task<int> SaveChangesAsync()
+        {
+            return await base.SaveChangesAsync();
+        }
     }
 }

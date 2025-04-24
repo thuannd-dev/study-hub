@@ -71,15 +71,15 @@ namespace TodoWeb.Application.Services.Grade
                     StudentId = student.Id,
                     StudentName = student.FirstName + " " + student.LastName,
                     CourseScore = student.CourseStudent.Where(course => course.CourseId == courseId)
-                .Select(cs => new CourseGradeViewModel
-                {
-                    CourseId = cs.CourseId,
-                    CourseName = cs.Course.Name,
-                    AssignmentScore = cs.Grade.AssignmentScore,
-                    PracticalScore = cs.Grade.PracticalScore,
-                    FinalScore = cs.Grade.FinalScore,
+                        .Select(cs => new CourseGradeViewModel
+                        {
+                            CourseId = cs.CourseId,
+                            CourseName = cs.Course.Name,
+                            AssignmentScore = cs.Grade.AssignmentScore,
+                            PracticalScore = cs.Grade.PracticalScore,
+                            FinalScore = cs.Grade.FinalScore,
 
-                }).ToList()
+                        }).ToList()
                 }).ToList();
 
             }

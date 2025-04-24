@@ -9,7 +9,7 @@ namespace TodoWeb.Application.Services.Courses
 
         public IEnumerable<CourseStudentDetailViewModel> GetCoursesDetail(int? courseId);
 
-        public int Post(PostCourseViewModel course);
+        public Task<int> Post(PostCourseViewModel course);
         public int Put(CourseViewModel course);
         public int Delete(int courseId);
     }

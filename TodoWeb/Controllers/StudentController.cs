@@ -44,16 +44,15 @@ namespace TodoWeb.Controllers
             return _studentService.GetStudents(schoolId);
         }
 
-        [HttpGet("SortBy/{sortBy}/Desc/{desc}/PageSize/{pageSize}/PageIndex/{pageIndex}")]
+        [HttpGet("/Students")]
         public IActionResult GetStudents(
-            string sortBy,
-            bool desc,
-            int pageSize,
-            int pageIndex)
+            [FromQuery] string sortBy,
+            [FromQuery] bool desc,
+            [FromQuery] int pageSize,
+            [FromQuery] int pageIndex)
         {
-
             var data = _studentService.GetStudents(sortBy, desc, pageSize, pageIndex);
-            if (data.IsNullOrEmpty())
+            if (data.TotalPages == 0 || data.Students.IsNullOrEmpty())
             {
                 return NotFound();
             }

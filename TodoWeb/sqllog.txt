@@ -3569,3 +3569,91 @@ SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname],
 FROM [Students] AS [s]
 INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
 WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%3%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%3%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%3%' OR LOWER([s0].[Name]) LIKE N'%3%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%3%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%thuận%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%thuận%' OR LOWER([s0].[Name]) LIKE N'%thuận%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%thuận%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%21%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%21%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%21%' OR LOWER([s0].[Name]) LIKE N'%21%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%21%' OR LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%tuổi%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%tuổi%' OR LOWER([s0].[Name]) LIKE N'%tuổi%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%tuổi%')
+SELECT COUNT(*)
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT [c].[Id] AS [CourseId], [c].[Name] AS [CourseName], [c].[StartDate]
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT COUNT(*)
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT COUNT(*)
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT COUNT(*)
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT [c].[Id] AS [CourseId], [c].[Name] AS [CourseName], [c].[StartDate]
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT COUNT(*)
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT [c].[Id] AS [CourseId], [c].[Name] AS [CourseName], [c].[StartDate]
+FROM [Course] AS [c]
+WHERE [c].[Id] = @__courseId_0
+SELECT COUNT(*)
+FROM [Students] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Id]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Id]
+SELECT COUNT(*)
+FROM [Students] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Id]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Id]
+SELECT COUNT(*)
+FROM [Students] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Id]
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Id]
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%1%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%1%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%1%' OR LOWER([s0].[Name]) LIKE N'%1%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%1%')
+SELECT COUNT(*)
+FROM [Students] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s1].[Id], COALESCE([s1].[FirstName], N'') + N' ' + COALESCE([s1].[Surname], N'') AS [FullName], [s1].[Age], [s0].[Name] AS [SchoolName], [s1].[Balance]
+FROM (
+    SELECT [s].[Id], [s].[Age], [s].[Balance], [s].[FirstName], [s].[Surname], [s].[SId]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3
+    ORDER BY [s].[Id] DESC
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_0 ROWS ONLY
+) AS [s1]
+INNER JOIN [School] AS [s0] ON [s1].[SId] = [s0].[Id]
+ORDER BY [s1].[Id] DESC
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%1%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[Surname], N'')) LIKE N'%1%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%1%' OR LOWER([s0].[Name]) LIKE N'%1%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%1%')

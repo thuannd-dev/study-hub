@@ -11,15 +11,25 @@ namespace TodoWeb.Controllers
     {
         //một instance của courseservice
         private readonly ICourseService _courseService;
-
-        public CourseController(ICourseService courseService)
+        private readonly ILogger<CourseController> _logger;
+        public CourseController(ICourseService courseService, ILogger<CourseController> logger)
         {
             _courseService = courseService;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
         public IEnumerable<CourseViewModel> GetCourse(int id)
         {
+            _logger.LogInformation($"Get Course with id: {id}");
+            if(id == 10)
+            {
+                _logger.LogWarning($"Warning: {id}");
+            }
+            if(id <= 0)
+            {
+                _logger.LogError($"Error: Id can't less 0");
+            }
             return _courseService.GetCourses(id);
         }
 
@@ -44,9 +54,17 @@ namespace TodoWeb.Controllers
 
 
         [HttpPost]
-        public int Post(PostCourseViewModel course)
+        public async Task<int> Post(PostCourseViewModel course)
         {
-            return _courseService.Post(course);
+            try
+            {
+                return await _courseService.Post(course);
+            }
+            catch (Exception ex)
+            {
+                //log
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpPut]

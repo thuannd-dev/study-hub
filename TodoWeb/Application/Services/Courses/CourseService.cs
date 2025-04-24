@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
@@ -56,20 +57,19 @@ namespace TodoWeb.Application.Services.Courses
 
         }
 
-        public int Post(PostCourseViewModel course)
+        public async Task<int> Post(PostCourseViewModel course)
         {
             //kiểm tra xem name có bị trùng hay không
-            var dupCourseName = _context.Course.FirstOrDefault(c => c.Name == course.CourseName);
+            var dupCourseName = await _context.Course.FirstOrDefaultAsync(c => c.Name == course.CourseName);
+            //var dupCourseName2 = await _context.Course.FirstOrDefaultAsync(c => c.Name == course.CourseName);
+            //db context là thread safe nên ko thể cho nó chạy song song
             if (dupCourseName != null) return -1;
-            //tạo ra instance of new course
-            //var data = new Domains.Entities.Course
-            //{
-            //    Name = course.CourseName,
-            //    StartDate = course.StartDate,
-            //};
+
+
             var data = _mapper.Map<Course>(course);
             _context.Course.Add(data);
-            _context.SaveChanges();
+            //ko await thì sẽ có khả năng lỗi
+            await _context.SaveChangesAsync();
             return data.Id;
         }
 

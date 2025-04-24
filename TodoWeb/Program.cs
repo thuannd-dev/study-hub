@@ -1,4 +1,5 @@
-﻿using TodoWeb.Application.Dtos.GuidModel;
+﻿using Serilog;
+using TodoWeb.Application.Dtos.GuidModel;
 using TodoWeb.Application.MapperProfiles;
 using TodoWeb.Application.Services;
 using TodoWeb.Application.Services.Courses;
@@ -46,6 +47,12 @@ builder.Services.AddAutoMapper(typeof(ExamProfile));
 builder.Services.AddAutoMapper(typeof(ExamQuestionProfile));
 builder.Services.AddAutoMapper(typeof(ExamSubmissionProfile));
 builder.Services.AddAutoMapper(typeof(ExamSubmissionDetailsProfile));
+//Log.Logger = new LoggerConfiguration()
+//    .MinimumLevel.Warning()
+//    .WriteTo.File("C:\\Users\\DELL\\OneDrive\\Desktop\\Logs\\log.txt",
+//        rollingInterval: RollingInterval.Minute)   
+//    .CreateLogger();
+//builder.Host.UseSerilog();
 
 //DI Containers, IServiceProvider
 var app = builder.Build();

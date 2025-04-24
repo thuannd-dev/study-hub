@@ -18,6 +18,7 @@ namespace TodoWeb.Infrastructures
         public DbSet<ExamSubmissionDetail> ExamSubmissionDetails { get; set; }
         public EntityEntry<T> Entry<T>(T entity) where T : class;
         public int SaveChanges();
+        public Task<int> SaveChangesAsync();
 
     }
 }

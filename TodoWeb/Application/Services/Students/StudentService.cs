@@ -66,12 +66,17 @@ namespace TodoWeb.Application.Services.Students
             //chua to list thif se build tren memory
         }
 
-        public IEnumerable<StudentViewModel> GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex)
+        public StudentPagingViewModel GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex)
         {
-            if(pageSize <= 0 || pageIndex <= 0)
+            if (pageSize <= 0 || pageIndex <= 0)
             {
-                return Enumerable.Empty<StudentViewModel>();
+                return new StudentPagingViewModel
+                {
+                    Students = Enumerable.Empty<StudentViewModel>().ToList(),
+                    TotalPages = 0
+                };
             }
+
             // Map sortBy string into a list of Expression selectors  
             var sortSelectors = sortBy.ToLower()
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -83,19 +88,25 @@ namespace TodoWeb.Application.Services.Students
                     "schoolname" => student => student.School.Name,
                     "balance" => student => student.Balance,
                     _ => student => student.Id
-
                 })).ToArray();
 
-            var query = _context.Students            
-                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+            var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted);
+
+            var totalPage = (int)Math.Ceiling((double)query.Count() / pageSize);
+
+            query = query
                 .ApplySort(isDescending, sortSelectors)
                 .ApplyPaging(pageIndex, pageSize)
                 .Include(student => student.School)
                 .AsQueryable();
 
-
-            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
-            return result;
+            var data = new StudentPagingViewModel
+            {
+                Students = _mapper.ProjectTo<StudentViewModel>(query).ToList(),
+                TotalPages = totalPage
+            };
+            return data;
         }
 
         public IEnumerable<StudentViewModel> SearchStudents(string searchTerm)
