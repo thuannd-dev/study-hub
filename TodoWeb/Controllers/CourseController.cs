@@ -29,6 +29,7 @@ namespace TodoWeb.Controllers
             if(id <= 0)
             {
                 _logger.LogError($"Error: Id can't less 0");
+                throw new Exception("Id can't less 0");
             }
             return _courseService.GetCourses(id);
         }

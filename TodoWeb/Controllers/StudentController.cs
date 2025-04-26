@@ -18,10 +18,10 @@ namespace TodoWeb.Controllers
         {
             _studentService = studentService;
         }
-        [HttpGet("/SearchStudent/{searchTerm}")]
-        public IActionResult SearchStudents(string searchTerm)
+        [HttpGet("/Studentss")]
+        public IActionResult SearchStudents([FromQuery] string search)
         {
-            var result = _studentService.SearchStudents(searchTerm);
+            var result = _studentService.SearchStudents(search);
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
@@ -38,7 +38,7 @@ namespace TodoWeb.Controllers
             return _studentService.GetStudentDetails(id);
         }
 
-        [HttpGet]
+        [HttpGet("/students")]
         public IEnumerable<StudentViewModel> GetStudents(int? schoolId)
         {
             return _studentService.GetStudents(schoolId);
