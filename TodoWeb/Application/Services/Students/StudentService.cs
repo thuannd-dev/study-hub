@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
@@ -23,50 +24,59 @@ namespace TodoWeb.Application.Services.Students
             _context = context;
             _mapper = mapper;
         }
-
-        public int Delete(StudentViewModel student)
+        public IEnumerable<StudentViewModel> GetStudent(int? studentId)
         {
-            throw new NotImplementedException();
-        }
-
-        //IQueryable cos khar nang build leen 1 cau query cos kha nang mo rong(extension)
-        public IEnumerable<StudentViewModel> GetStudents(int? schoolId)
-        {
-            //query = slect * from student 
-            //join school on student.sId = School.id
             var query = _context.Students
                 .Where(student => student.Status != Constants.Enums.Status.Deleted)
-                .Include(student => student.School)//icludeQueryAble
                 .AsQueryable();//build leen 1 cau query
-
-            if (schoolId.HasValue)
+            if (studentId.HasValue)
             {
-                //query = slect * from student 
-                //join school on student.sId = School.id
-                //Where(x => x.S.Id == schoolId)
-                query = query.Where(x => x.School.Id == schoolId);//add theem ddk 
+                query = query.Where(x => x.Id == studentId);//add theem ddk 
             }
-            //Select 
-            //Id = x.Id,
-            //FullName = x.FirstName + x.LastName,
-            //SchoolName = x.School.Name,
-            //from student 
-            //join school on student.schoolId = School.id
-            //Where(x => x.SId == schoolId) (depend if schoolId is not null)
+            query = query.Include(student => student.School);
             var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
             return result;
-
-            //return query.Select(x => new StudentViewModel
-            //{
-            //    Id = x.Id,
-            //    FullName = x.FirstName + " " + x.LastName,
-            //    Age = x.Age,
-            //    SchoolName = x.School.Name,
-            //}).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
-            //chua to list thif se build tren memory
         }
 
-        public StudentPagingViewModel GetStudents(string sortBy, bool isDescending, int pageSize, int pageIndex)
+
+        //IQueryable cos khar nang build leen 1 cau query cos kha nang mo rong(extension)
+        //public IEnumerable<StudentViewModel> GetStudents(int? schoolId)
+        //{
+        //    //query = slect * from student 
+        //    //join school on student.sId = School.id
+        //    var query = _context.Students
+        //        .Where(student => student.Status != Constants.Enums.Status.Deleted)
+        //        .Include(student => student.School)//icludeQueryAble
+        //        .AsQueryable();//build leen 1 cau query
+
+        //    if (schoolId.HasValue)
+        //    {
+        //        //query = slect * from student 
+        //        //join school on student.sId = School.id
+        //        //Where(x => x.S.Id == schoolId)
+        //        query = query.Where(x => x.School.Id == schoolId);//add theem ddk 
+        //    }
+        //    //Select 
+        //    //Id = x.Id,
+        //    //FullName = x.FirstName + x.LastName,
+        //    //SchoolName = x.School.Name,
+        //    //from student 
+        //    //join school on student.schoolId = School.id
+        //    //Where(x => x.SId == schoolId) (depend if schoolId is not null)
+        //    var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+        //    return result;
+
+        //    //return query.Select(x => new StudentViewModel
+        //    //{
+        //    //    Id = x.Id,
+        //    //    FullName = x.FirstName + " " + x.LastName,
+        //    //    Age = x.Age,
+        //    //    SchoolName = x.School.Name,
+        //    //}).ToList();//khi minhf chaams to list thi entity framework moi excute cau query 
+        //    //chua to list thif se build tren memory
+        //}
+
+        public StudentPagingViewModel GetStudents(int? schoolId, string? sortBy, bool isDescending, int? pageSize, int? pageIndex)
         {
             if (pageSize <= 0 || pageIndex <= 0)
             {
@@ -76,31 +86,60 @@ namespace TodoWeb.Application.Services.Students
                     TotalPages = 0
                 };
             }
+            var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+                .Include(student => student.School)
+                .AsQueryable();
+
+            if (schoolId.HasValue)
+            {
+                query = query.Where(x => x.School.Id == schoolId);//add theem ddk 
+            }
+
 
             // Map sortBy string into a list of Expression selectors  
-            var sortSelectors = sortBy.ToLower()
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(f => (Expression<Func<Student, object>>)(f.Trim() switch
-                {
-                    "id" => student => student.Id,
-                    "age" => student => student.Age,
-                    "fullname" => student => student.FirstName + " " + student.LastName,
-                    "schoolname" => student => student.School.Name,
-                    "balance" => student => student.Balance,
-                    _ => student => student.Id
-                })).ToArray();
+            Expression<Func<Student, object>>[] sortSelectors;
+            if (sortBy.IsNullOrEmpty())
+            {
+                sortSelectors = [];
+            }else
+            {
+                sortSelectors = sortBy.ToLower()
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(f => (Expression<Func<Student, object>>)(f.Trim() switch
+                    {
+                        "id" => student => student.Id,
+                        "age" => student => student.Age,
+                        "fullname" => student => student.FirstName + " " + student.LastName,
+                        "schoolname" => student => student.School.Name,
+                        "balance" => student => student.Balance,
+                        _ => student => student.Id
+                    })).ToArray();
+            }
 
-            var query = _context.Students
-                .Where(student => student.Status != Constants.Enums.Status.Deleted);
-
-            var totalPage = (int)Math.Ceiling((double)query.Count() / pageSize);
+            if(pageSize.HasValue && pageIndex == null)
+            {
+                pageIndex = 1;
+            }
+            if (pageIndex.HasValue && pageSize == null)
+            {
+                pageSize = 5;
+            }
 
             query = query
                 .ApplySort(isDescending, sortSelectors)
                 .ApplyPaging(pageIndex, pageSize)
-                .Include(student => student.School)
                 .AsQueryable();
-
+            int totalPage;
+            if(pageSize == null)
+            {
+                totalPage = 1;
+            }else
+            {
+                var numberOfStudents = _context.Students.Count();
+                totalPage = (int)Math.Ceiling((double)numberOfStudents / (int)pageSize);
+            }
+                
             var data = new StudentPagingViewModel
             {
                 Students = _mapper.ProjectTo<StudentViewModel>(query).ToList(),
@@ -238,5 +277,6 @@ namespace TodoWeb.Application.Services.Students
             //    }).ToList()
             //};
         }
+
     }
 }

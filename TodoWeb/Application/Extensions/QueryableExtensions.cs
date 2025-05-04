@@ -160,9 +160,11 @@ namespace TodoWeb.Application.Extensions
         }
 
 
-        public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int pageIndex, int pageSize)
+        public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, int? pageIndex, int? pageSize)
         {
-            return query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            if (pageIndex == null || pageSize == null)
+                return query;
+            return query.Skip((int)((pageIndex - 1) * pageSize)).Take((int)pageSize);
         }
 
         /// <summary>

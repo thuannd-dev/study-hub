@@ -20,10 +20,10 @@ namespace TodoWeb.Controllers
         {
             _studentService = studentService;
         }
-        [HttpGet("/Studentss")]
-        public IActionResult SearchStudents([FromQuery] string search)
+        [HttpGet("/search")]
+        public IActionResult SearchStudents([FromQuery] string search_query)
         {
-            var result = _studentService.SearchStudents(search);
+            var result = _studentService.SearchStudents(search_query);
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
@@ -34,33 +34,36 @@ namespace TodoWeb.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public StudentCourseDetailViewModel GetStudentDetails (int id)
+        [HttpGet("{studentId}")]
+        public IActionResult GetStudent(int studentId)
         {
-            return _studentService.GetStudentDetails(id);
-        }
-
-        [HttpGet("/students")]
-        public IEnumerable<StudentViewModel> GetStudents(int? schoolId)
-        {
-            return _studentService.GetStudents(schoolId);
+            var result = _studentService.GetStudent(studentId);
+            return Ok(result);
         }
 
         [HttpGet("/Students")]
         public IActionResult GetStudents(
-            [FromQuery] string sortBy,
+            [FromQuery] int? schoolId,
+            [FromQuery] string? sortBy,
             [FromQuery] bool desc,
-            [FromQuery] int pageSize,
-            [FromQuery] int pageIndex)
+            [FromQuery] int? pageSize,
+            [FromQuery] int? pageIndex)
+            
         {
-            var data = _studentService.GetStudents(sortBy, desc, pageSize, pageIndex);
-            if (data.TotalPages == 0 || data.Students.IsNullOrEmpty())
+            var result = _studentService.GetStudents(schoolId, sortBy, desc, pageSize, pageIndex);
+            if (result.TotalPages == 0 || result.Students.IsNullOrEmpty())
             {
                 return NotFound();
             }
-            return Ok(data);
+            return Ok(result);
+
         }
 
+        [HttpGet("/StudentDetails/{id}")]
+        public StudentCourseDetailViewModel GetStudentDetails(int id)
+        {
+            return _studentService.GetStudentDetails(id);
+        }
 
         [HttpPost]
         public int Post(StudentViewModel student)
