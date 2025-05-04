@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Services.Courses;
@@ -7,6 +8,10 @@ namespace TodoWeb.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [TypeFilter(typeof(LogFilter), Arguments = [LogLevel.Warning])]
+    //typefilter tạo ra mỗi instance của LogFilter, mỗi lần gọi vào thì nó sẽ tạo ra một instance mới của LogFilter (giống với scope)
+    //dùng khi muốn truyền tham số vào trong constructor của filter
+    [AuditFilter]
     public class CourseController : Controller
     {
         //một instance của courseservice
@@ -18,8 +23,9 @@ namespace TodoWeb.Controllers
             _logger = logger;
         }
 
+        [TypeFilter(typeof(CacheFilter), Arguments = [10])]
         [HttpGet("{id}")]
-        public IEnumerable<CourseViewModel> GetCourse(int id)
+        public IActionResult GetCourse(int id)
         {
             _logger.LogInformation($"Get Course with id: {id}");
             if(id == 10)
@@ -31,7 +37,7 @@ namespace TodoWeb.Controllers
                 _logger.LogError($"Error: Id can't less 0");
                 throw new Exception("Id can't less 0");
             }
-            return _courseService.GetCourses(id);
+            return Ok(_courseService.GetCourses(id));
         }
 
 
@@ -55,11 +61,11 @@ namespace TodoWeb.Controllers
 
 
         [HttpPost]
-        public async Task<int> Post(PostCourseViewModel course)
+        public async Task<IActionResult> Post(PostCourseViewModel course)
         {
             try
             {
-                return await _courseService.Post(course);
+                return Ok(await _courseService.Post(course));
             }
             catch (Exception ex)
             {

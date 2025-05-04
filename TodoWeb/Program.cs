@@ -1,8 +1,10 @@
 ﻿using Serilog;
+using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.GuidModel;
 using TodoWeb.Application.MapperProfiles;
 using TodoWeb.Application.Middleware;
 using TodoWeb.Application.Services;
+using TodoWeb.Application.Services.CacheService;
 using TodoWeb.Application.Services.Courses;
 using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Application.Services.ExamQuestions;
@@ -19,7 +21,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(option =>
+{
+    option.Filters.Add<TestFilter>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -57,7 +62,9 @@ builder.Services.AddAutoMapper(typeof(ExamSubmissionProfile));
 builder.Services.AddAutoMapper(typeof(ExamSubmissionDetailsProfile));
 builder.Services.AddSingleton<LogMiddleware>();
 builder.Services.AddSingleton<RateLimitMiddleware>();
-
+//builder.Services.AddSingleton<LogFilter>();
+builder.Services.AddSingleton<ICacheService, CacheService>();
+builder.Services.AddMemoryCache();
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Warning()
     .WriteTo.File("C:\\Users\\DELL\\OneDrive\\Desktop\\Logs\\log.txt",
@@ -104,6 +111,5 @@ app.Use(async (context, next) =>
 });
 
 app.UseMiddleware<LogMiddleware>();
-//app.UseMiddleware<RateLimitMiddleware>();
 
 app.Run();

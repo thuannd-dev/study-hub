@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Application.Services.Students;
@@ -10,6 +11,7 @@ namespace TodoWeb.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [TypeFilter(typeof(LogFilter), Arguments = [LogLevel.Warning])]
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
