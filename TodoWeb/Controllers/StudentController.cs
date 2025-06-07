@@ -34,6 +34,20 @@ namespace TodoWeb.Controllers
             }
         }
 
+        [HttpGet("/AllStudents")]
+        public IActionResult GetAllStudents()
+        {
+            var result = _studentService.GetStudents();
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(result);
+            }
+        }
+
         [HttpGet("{studentId}")]
         public IActionResult GetStudent(int studentId)
         {
@@ -66,9 +80,14 @@ namespace TodoWeb.Controllers
         }
 
         [HttpPost]
-        public int Post(StudentViewModel student)
+        public IActionResult Post(StudentViewModel student)
         {
-            return _studentService.Post(student);
+            
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(_studentService.Post(student));
         }
         [HttpPut]
         public int Put(StudentViewModel student)

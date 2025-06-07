@@ -13,7 +13,7 @@ namespace TodoWeb.Domains.Entities
         
         [MaxLength(255)]//chieu dai toi da 255
         public string? FirstName { get; set; }//? giup co the null
-        [Column("Surname")]
+        //[Column("Surname")]
         [StringLength(255)]
         public string? LastName { get; set; }
 

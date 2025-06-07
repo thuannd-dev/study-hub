@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Application.Services.School;
+using TodoWeb.Constants.Enums;
 
 namespace TodoWeb.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //[TypeFilter(typeof(AuthorizationFilter), Arguments = [new Role[] { Role.Admin, Role.User }])]
+    [Authorize(Roles = "User, Admin")]//atribute này ko phục vụ cho session
     public class SchoolController : Controller
     {
         private readonly ISchoolService _schoolService;
@@ -18,6 +23,7 @@ namespace TodoWeb.Controllers
         [HttpGet]
         public IEnumerable<SchoolViewModel> GetSchools(int? schoolId)
         {
+            
             return _schoolService.GetSchools(schoolId);
         }
 

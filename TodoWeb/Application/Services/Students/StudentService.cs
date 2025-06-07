@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
@@ -17,12 +18,15 @@ namespace TodoWeb.Application.Services.Students
 
     public class StudentService : IStudentService
     {
+        private const string STUDENT_KEY = "StudentKey";
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public StudentService(IApplicationDbContext context, IMapper mapper)
+        private readonly IMemoryCache _cache;
+        public StudentService(IApplicationDbContext context, IMapper mapper, IMemoryCache cache)
         {
             _context = context;
             _mapper = mapper;
+            _cache = cache;
         }
         public IEnumerable<StudentViewModel> GetStudent(int? studentId)
         {
@@ -34,6 +38,35 @@ namespace TodoWeb.Application.Services.Students
                 query = query.Where(x => x.Id == studentId);//add theem ddk 
             }
             query = query.Include(student => student.School);
+            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            return result;
+        }
+
+        public IEnumerable<StudentViewModel> GetStudents()
+        {
+            //var data = _cache.Get<IEnumerable<StudentViewModel>>(STUDENT_KEY);
+            //if (data == null)
+            //{
+            //    data = GetAllStudent();
+            //    var cacheOptions = new MemoryCacheEntryOptions()
+            //        .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));//thoi gian ton tai trong cache
+            //    _cache.Set(STUDENT_KEY, data, cacheOptions);
+            //}
+            //return data;
+            var data = _cache.GetOrCreate(STUDENT_KEY, entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromSeconds(30);//sliding cập nhật lại thời gian ở mỗi lần request
+                return GetAllStudent();
+            });
+            return data;
+        }
+
+        private IEnumerable<StudentViewModel> GetAllStudent()
+        {
+            var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+                .Include(student => student.School)
+                .AsQueryable();
             var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
             return result;
         }
@@ -208,6 +241,7 @@ namespace TodoWeb.Application.Services.Students
             };
             _context.Students.Add(data);
             _context.SaveChanges();
+            _cache.Remove(STUDENT_KEY);
             return data.Id;
 
         }

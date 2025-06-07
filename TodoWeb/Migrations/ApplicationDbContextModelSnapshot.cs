@@ -348,6 +348,34 @@ namespace TodoWeb.Migrations
                     b.ToTable("Questions");
                 });
 
+            modelBuilder.Entity("TodoWeb.Domains.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpireTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("TodoWeb.Domains.Entities.School", b =>
                 {
                     b.Property<int>("Id")
@@ -413,8 +441,7 @@ namespace TodoWeb.Migrations
 
                     b.Property<string>("LastName")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Surname");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("SId")
                         .HasColumnType("int");
@@ -447,6 +474,41 @@ namespace TodoWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ToDos");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Salting")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TodoWeb.Domains.Entities.CourseStudent", b =>
@@ -547,6 +609,17 @@ namespace TodoWeb.Migrations
                     b.Navigation("CourseStudent");
                 });
 
+            modelBuilder.Entity("TodoWeb.Domains.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("TodoWeb.Domains.Entities.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TodoWeb.Domains.Entities.Student", b =>
                 {
                     b.HasOne("TodoWeb.Domains.Entities.School", "School")
@@ -596,6 +669,11 @@ namespace TodoWeb.Migrations
             modelBuilder.Entity("TodoWeb.Domains.Entities.Student", b =>
                 {
                     b.Navigation("CourseStudent");
+                });
+
+            modelBuilder.Entity("TodoWeb.Domains.Entities.User", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

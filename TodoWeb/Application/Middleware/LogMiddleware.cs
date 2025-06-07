@@ -23,15 +23,6 @@ namespace TodoWeb.Application.Middleware
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsync("An unexpected error occurred.");
             }
-            //finally
-            //{
-            //    //string interpolation
-            //    var request = context.Request;
-            //    var response = context.Response;
-            //    _logger.LogInformation($"Request: {request.Method} {request.Path}");
-            //    _logger.LogInformation($"Response: {response.StatusCode}");
-            //}
-            
         }
     }
 }

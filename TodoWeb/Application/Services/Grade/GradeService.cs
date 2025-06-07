@@ -4,7 +4,6 @@ using TodoWeb.Application.Dtos.GradeStudentModel;
 using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
-using TodoWeb.Domains.Entities;
 namespace TodoWeb.Application.Services.Grade
 {
     public class GradeService : IGradeService

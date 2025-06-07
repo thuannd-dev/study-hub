@@ -1,0 +1,49 @@
+.facebook-login-button {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.facebook-login-button:hover {
+  background-color: #166fe5;
+}
+
+.facebook-login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.facebook-login-button i {
+  font-size: 20px;
+}
+
+.facebook-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.facebook-error {
+  color: #dc3545;
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  background-color: #f8d7da;
+  border-radius: 6px;
+  margin: 8px 0;
+}
