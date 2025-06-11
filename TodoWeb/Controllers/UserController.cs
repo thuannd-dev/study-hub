@@ -190,10 +190,11 @@ namespace TodoWeb.Controllers
             HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
             return Ok(accessToken);
         }
-        [HttpPost("refresh-token")]
 
+        [HttpPost("refresh-token")]
         public IActionResult RefreshToken()
         {
+            //lấy refresh token từ cookie
             var isExist = HttpContext.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
             if (!isExist || refreshToken == null || refreshToken.Length == 0)
             {
@@ -224,9 +225,15 @@ namespace TodoWeb.Controllers
         }
 
         [HttpPost("Logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            //xóa access token ở cookie
+            //phía client sẽ xóa access token
+            //xóa refresh token ở cookie
+            HttpContext.Response.Cookies.Delete("RefreshToken");
+            // Clear session
             HttpContext.Session.Clear();
+            //xóa refresh token ở db
             return Ok();
         }
 

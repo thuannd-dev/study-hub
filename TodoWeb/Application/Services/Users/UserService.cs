@@ -104,7 +104,9 @@ namespace TodoWeb.Application.Services.Users
         public string GenerateRefreshToken(int userId)
         {
             string refreshToken = HashHelper.GennerateRandomString(64);
-            //nên dùng sha256 thay vì md5 vì cần nhanh
+            //refreshtoken cũng ko nên lưu dưới dạng raw data giống password,
+            //nên dùng sha256 thay vì bcript vì với api tạo refresh token thì sẽ dùng nhiều hơn rất nhiều so với 
+            //api login, nếu dùng bcript thì sẽ tốn thời gian hơn nhưng vẫn đc
             string hashedRefreshToken = HashHelper.Hash256(refreshToken);
             var data = new RefreshToken
             {

@@ -10,8 +10,7 @@ export default function GoogleLoginButton() {
 
       window.google.accounts.id.renderButton(
         document.getElementById("google-signin-button"),
-
-        { theme: "outline", size: "large" }
+        { theme: "filled", size: "large", shape: "rectangular" }
       );
     }
   }, []);

@@ -5006,3 +5006,403 @@ INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldVal
 OUTPUT INSERTED.[Id]
 VALUES (@p0, @p1, @p2, @p3, @p4);
 
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [RefreshTokens] AS [r]
+INNER JOIN [Users] AS [u] ON [r].[UserId] = [u].[Id]
+WHERE [r].[Token] = @__refreshToken_0 AND [r].[IsRevoked] = CAST(0 AS bit) AND [r].[ExpireTime] > GETDATE()
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+MERGE [AuditLog] USING (
+VALUES (@p0, @p1, @p2, @p3, @p4, 0),
+(@p5, @p6, @p7, @p8, @p9, 1),
+(@p10, @p11, @p12, @p13, @p14, 2)) AS i ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue], _Position) ON 1=0
+WHEN NOT MATCHED THEN
+INSERT ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+VALUES (i.[Action], i.[CreatedAt], i.[EntityName], i.[NewValue], i.[OldValue])
+OUTPUT INSERTED.[Id], i._Position;
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p15;
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p16;
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p17;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Name] = @__school_Name_0
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SELECT TOP(1) [s].[Id], [s].[Address], [s].[DeleteAt], [s].[DeleteBy], [s].[Name], [s].[Status]
+FROM [School] AS [s]
+WHERE [s].[Id] = @__p_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+UPDATE [School] SET [Name] = @p5
+OUTPUT 1
+WHERE [Id] = @p6;
+
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+DELETE FROM [RefreshTokens]
+OUTPUT 1
+WHERE [Id] = @p5;
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+

@@ -84,11 +84,11 @@ namespace TodoWeb.Application.Services.School
             }
             var name = school.Name.Split(' ');
             //kiểm tra xem người dùng có đưa đúng tên school
-            var existingSchool = _context.School.FirstOrDefault(s => s.Name.Equals(school.Name));//không dùng where bởi vì tìm ra một list
-            if (existingSchool != null)
-            {
-                return -1;
-            }
+            //var existingSchool = _context.School.FirstOrDefault(s => s.Name.Equals(school.Name));//không dùng where bởi vì tìm ra một list
+            //if (existingSchool != null)
+            //{
+            //    return -1;
+            //}
             //data.Name = school.Name;
             //data.Address = school.Address;
             _mapper.Map(school, data);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OfficeOpenXml;
 using Serilog;
 using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.GuidModel;
@@ -132,6 +133,9 @@ builder.Services.Configure<GoogleSettings>(googleSettings);
 var facebookSettings = builder.Configuration.GetSection("FacebookAuthentication");
 builder.Services.Configure<FacebookSettings>(facebookSettings);
 
+var fileInformation = builder.Configuration.GetSection("FileInformation");
+builder.Services.Configure<FileInformation>(fileInformation);
+
 //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 //    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
 //    {
@@ -183,6 +187,8 @@ Log.Logger = new LoggerConfiguration()
         rollingInterval: RollingInterval.Minute)
     .CreateLogger();
 builder.Host.UseSerilog();
+
+ExcelPackage.License.SetNonCommercialPersonal("Thuan");
 
 //DI Containers, IServiceProvider
 var app = builder.Build();

@@ -21,7 +21,7 @@ namespace TodoWeb.Application.Helpers
             var random = new Random();
             for (int i = 0; i < length; i++)
             {
-                s.Append((char)random.Next('a', 'z'));
+                s.Append((char)random.Next(1, 255));
             }
             return s.ToString();
         }
