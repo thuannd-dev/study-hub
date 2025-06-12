@@ -206,6 +206,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 //authen phải trước authorization vì đây là middleware xác thực người dùng
 app.UseAuthentication();
+app.UseMiddleware<RevokeCheckMiddleware>();
 app.UseAuthorization();
 app.UseSession();
 app.MapControllers();

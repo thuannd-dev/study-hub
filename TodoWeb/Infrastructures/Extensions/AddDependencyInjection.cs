@@ -48,6 +48,7 @@ namespace TodoWeb.Infrastructures.Extensions
             serviceCollection.AddAutoMapper(typeof(UserProfile));
             serviceCollection.AddSingleton<LogMiddleware>();
             serviceCollection.AddSingleton<RateLimitMiddleware>();
+            serviceCollection.AddSingleton<RevokeCheckMiddleware>();
             //serviceCollection.AddSingleton<LogFilter>();
             serviceCollection.AddSingleton<ICacheService, CacheService>();
             serviceCollection.AddSingleton<IGoogleCredentialService, GoogleCredentialService>();

@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using TodoWeb.Application.Dtos.UserModel;
 using TodoWeb.Application.Dtos.UserModel.Contracts;
 using TodoWeb.Application.Services.Users;
 using TodoWeb.Application.Services.Users.FacebookService;
 using TodoWeb.Application.Services.Users.GoogleService;
+using TodoWeb.Domains.Entities;
 
 namespace TodoWeb.Controllers
 {
@@ -19,11 +21,13 @@ namespace TodoWeb.Controllers
         private readonly IUserService _userService;
         private readonly IGoogleCredentialService _googleCredentialService;
         private readonly IFacebookCredentialService _facebookCredentialService;
-        public UserController(IUserService userService, IGoogleCredentialService googleCredentialService, IFacebookCredentialService facebookCredentialService)
+        private readonly IMemoryCache _cache;
+        public UserController(IUserService userService, IGoogleCredentialService googleCredentialService, IFacebookCredentialService facebookCredentialService, IMemoryCache cache)
         {
             _userService = userService;
             _googleCredentialService = googleCredentialService;
             _facebookCredentialService = facebookCredentialService;
+            _cache = cache;
         }
 
         [HttpPost("Create")]
@@ -225,10 +229,12 @@ namespace TodoWeb.Controllers
         }
 
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(int userId)
         {
             //xóa access token ở cookie
             //phía client sẽ xóa access token
+            // Delete the refresh token from the database
+            _userService.DeleteOldRefreshToken(userId);
             //xóa refresh token ở cookie
             HttpContext.Response.Cookies.Delete("RefreshToken");
             // Clear session
@@ -248,14 +254,18 @@ namespace TodoWeb.Controllers
         // Yes => return Unauthorize
         // No => continue processing
         [HttpPost("Revoke")]
-        public IActionResult Revoke()
+        public IActionResult Revoke(int userId)
         {
-            // Clear session and cookies
+            //chặn ng dùng trong 10 phút, không cho truy cập vào hệ thống nữa, sau 10 phút thì có thể đăng nhập lại bình thường
+            // Clear session and cookies 
             HttpContext.Session.Clear();
+            // Delete the refresh token from the database
+            _userService.DeleteOldRefreshToken(userId);
+            // Delete the refresh token cookie
             HttpContext.Response.Cookies.Delete("RefreshToken");
-            
-
-            return Ok("Logout success");
+            // Add user to cache with key "REVOKE_USER:{userId}" and value true
+            _cache.Set($"REVOKE_USER:{userId}", true, TimeSpan.FromMinutes(10));//accesstoken expries in 1 minutes
+            return Ok("User has been revoked successfully.");
         }
     }
 }
