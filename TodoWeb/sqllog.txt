@@ -5568,3 +5568,60 @@ DELETE FROM [RefreshTokens]
 OUTPUT 1
 WHERE [Id] = @p5;
 
+SELECT TOP(1) [u].[Id], [u].[EmailAddress], [u].[FullName], [u].[Password], [u].[Role], [u].[Salting]
+FROM [Users] AS [u]
+WHERE [u].[EmailAddress] = @__user_EmailAddress_0
+SELECT [r].[Id], [r].[ExpireTime], [r].[IsRevoked], [r].[Token], [r].[UserId]
+FROM [RefreshTokens] AS [r]
+WHERE [r].[UserId] = @__userId_0
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RefreshTokens] ([ExpireTime], [IsRevoked], [Token], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3
+SELECT [s].[Id], [s].[Name], [s].[Address]
+FROM [School] AS [s]
+WHERE [s].[Status] <> 3

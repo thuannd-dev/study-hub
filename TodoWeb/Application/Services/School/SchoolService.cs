@@ -18,18 +18,19 @@ namespace TodoWeb.Application.Services.School
         }
 
 
-        public IEnumerable<SchoolViewModel> GetSchools(int? schoolId)
+        public async Task<IEnumerable<SchoolViewModel>> GetSchools(int? schoolId)
         {
             var query = _context.School
                 .Where(school => school.Status != Constants.Enums.Status.Deleted)
-                .AsQueryable();//build leen 1 cau query
+                .AsQueryable();//build leen 1 cau query nên ko cần await ở đây, await chỉ dùng khi gọi đến database
 
             if (schoolId.HasValue)
             {
 
                 query = query.Where(x => x.Id == schoolId);//add theem ddk 
             }
-            return _mapper.ProjectTo<SchoolViewModel>(query);
+            var data = await query.ToListAsync();//chỉ khi nào gọi đến database thì mới cần await, ở đây sẽ trả về một list các school
+            return _mapper.Map<IEnumerable<SchoolViewModel>>(data);
             //return query.Select(x => new SchoolViewModel
             //{
             //    Id = x.Id,

@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using OfficeOpenXml;
 using Serilog;
 using TodoWeb.Application.ActionFilters;
+using TodoWeb.Application.BackgroundJobs;
 using TodoWeb.Application.Dtos.GuidModel;
 using TodoWeb.Application.MapperProfiles;
 using TodoWeb.Application.Middleware;
@@ -190,6 +192,9 @@ builder.Host.UseSerilog();
 
 ExcelPackage.License.SetNonCommercialPersonal("Thuan");
 
+builder.Services.AddHangfire(x => x.UseSqlServerStorage("Server=DESKTOP-TUDP88B\\SQLEXPRESS;Database=ToDoApp;Trusted_Connection=True;TrustServerCertificate=True"));
+builder.Services.AddHangfireServer();
+
 //DI Containers, IServiceProvider
 var app = builder.Build();
 
@@ -237,5 +242,13 @@ app.Use(async (context, next) =>
 });
 
 app.UseMiddleware<LogMiddleware>();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    IgnoreAntiforgeryToken = true                                 // <--This
+});
+
+RecurringJob.AddOrUpdate<GenerateSchoolReportJob>("TestJob",
+    job => job.ExecuteAsync(), Cron.Minutely);
 
 app.Run();

@@ -1,7 +1,7 @@
 ﻿
 namespace TodoWeb.Application.Middleware
 {
-    //trong 30s hệ thống chỉ cho phép 10 request
+    //trong 30s hệ thống chỉ cho phép 100 request
     public class RateLimitMiddleware : IMiddleware
     {
         private readonly ILogger<RateLimitMiddleware> _logger;
@@ -21,7 +21,7 @@ namespace TodoWeb.Application.Middleware
                 _requestCount = 0;
                 _startTime = currentTime;
             }
-            if (_requestCount >= 10)
+            if (_requestCount >= 100)
             {
                 context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                 await context.Response.WriteAsync("Rate limit exceeded. Try again later.");

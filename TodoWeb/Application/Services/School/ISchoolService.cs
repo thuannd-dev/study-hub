@@ -4,7 +4,7 @@ namespace TodoWeb.Application.Services.School
 {
     public interface ISchoolService
     {
-        public IEnumerable<SchoolViewModel> GetSchools(int? schoolId);
+        public Task<IEnumerable<SchoolViewModel>> GetSchools(int? schoolId);
         public SchoolStudentViewModel GetSchoolDetail(int schoolId);
         public int Post(SchoolViewModel school);
         public int Put(SchoolViewModel school);

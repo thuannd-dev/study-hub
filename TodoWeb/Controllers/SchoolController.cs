@@ -1,32 +1,38 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Xml;
+using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
+using RazorLight;
 using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Application.Services.School;
 using TodoWeb.Constants.Enums;
+using TodoWeb.Domains.AppsettingsConfigurations;
 
 namespace TodoWeb.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     //[TypeFilter(typeof(AuthorizationFilter), Arguments = [new Role[] { Role.Admin, Role.User }])]
-    [Authorize(Roles = "User, Admin")]//atribute này ko phục vụ cho session
+    //[Authorize(Roles = "User, Admin")]//atribute này ko phục vụ cho session
     public class SchoolController : Controller
     {
         private readonly ISchoolService _schoolService;
-
-        public SchoolController(ISchoolService schoolService)
+        private readonly FileInformation _fileInformation;
+        public SchoolController(ISchoolService schoolService, IOptions<FileInformation> fileInformation)
         {
             _schoolService = schoolService;
+            _fileInformation = fileInformation.Value;
         }
 
         [HttpGet]
-        public IEnumerable<SchoolViewModel> GetSchools(int? schoolId)
+        public async Task<IActionResult> GetSchools(int? schoolId)
         {
-            
-            return _schoolService.GetSchools(schoolId);
+
+            return Ok(await _schoolService.GetSchools(schoolId));
         }
 
         [HttpGet("{id}/detail")]
@@ -55,7 +61,7 @@ namespace TodoWeb.Controllers
         [HttpGet("excel")]
         public async Task<IActionResult> ExportSchools()
         {
-            var schools = _schoolService.GetSchools(null);
+            var schools = await _schoolService.GetSchools(null);
             using var stream = new MemoryStream();
             using var excelFile = new ExcelPackage(stream);
             var worksheet = excelFile.Workbook.Worksheets.Add("Schools");
@@ -89,7 +95,8 @@ namespace TodoWeb.Controllers
                         Name = worksheet.Cells[row, 2].Text,
                         Address = worksheet.Cells[row, 3].Text
                     });
-                }else
+                }
+                else
                 {
                     result = _schoolService.Put(new SchoolViewModel
                     {
@@ -98,7 +105,7 @@ namespace TodoWeb.Controllers
                         Address = worksheet.Cells[row, 3].Text
                     });
                 }
-                if(result == -1)
+                if (result == -1)
                 {
                     return BadRequest($"Error processing row {row}: School could not be saved.");
                 }
@@ -107,5 +114,71 @@ namespace TodoWeb.Controllers
             return Ok("Schools imported successfully.");
         }
 
+        [HttpGet("pdf")]
+        public async Task<IActionResult> ExportSchoolPdf()
+        {
+
+            var htmlText = System.IO.File.ReadAllText("Template/SchoolReport.html");
+            htmlText = htmlText.Replace("{{SchoolName}}", "Thuan Dep Trai");
+
+            var rederEngine = new ChromePdfRenderer();
+
+            var pdf = await rederEngine.RenderHtmlAsPdfAsync(htmlText);
+
+            var path = Path.Combine(_fileInformation.RootDirectory, "SchoolReport.pdf");
+
+            pdf.SaveAs(path);
+            return Ok();
+        }
+
+        [HttpGet("pdf-dynamic")]
+        public async Task<IActionResult> ExportSchoolPdfDynamic()
+        {
+            var schools = await _schoolService.GetSchools(null);
+
+            var model = new SchoolReportModel
+            {
+                Author = "Thuan Dep Trai",
+                DateCreated = DateTime.Now.ToString("dd/MM/yyyy"),
+                Schools = schools.ToList()
+            };
+
+            var engine = new RazorLightEngineBuilder()
+                .UseFileSystemProject(Path.Combine(Directory.GetCurrentDirectory(), "Template"))
+                .UseMemoryCachingProvider() // Cache file static để lần sau khỏi phải đọc - tạo
+                .Build();
+
+            string htmlText = await engine.CompileRenderAsync("SchoolReportDynamic.cshtml", model);
+
+            var rederEngine = new ChromePdfRenderer();
+
+            var pdf = await rederEngine.RenderHtmlAsPdfAsync(htmlText);
+
+            //var path = Path.Combine(_fileInformation.RootDirectory, "SchoolReport.pdf");
+
+            //pdf.SaveAs(path);
+
+            //using var memoryStream = new MemoryStream();
+            //await pdf.Stream.CopyToAsync(memoryStream);
+
+            return File(pdf.BinaryData, "application/pdf", "SchoolReport.pdf");
+        }
+
+        [HttpGet("test-hangfire")]
+        public async Task<IActionResult> TestHangFire()
+        {
+            
+            string jobId =  BackgroundJob.Enqueue(() => Console.WriteLine("Hello, Hangfire!"));
+
+            string jobId2 = BackgroundJob.Schedule(() => Console.WriteLine("This is a delayed job!"), TimeSpan.FromSeconds(10));
+
+            string jobId3 = BackgroundJob.ContinueJobWith(jobId2,
+                () => Console.WriteLine("This job runs after the job two!"));
+
+            BackgroundJob.ContinueJobWith(jobId3,
+                () => Console.WriteLine("This job runs after the job three!"));
+            return Ok();
+
+        }
     }
 }
