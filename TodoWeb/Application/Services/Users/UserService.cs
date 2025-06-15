@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TodoWeb.Application.Dtos.UserModel;
 using TodoWeb.Application.Helpers;
+using TodoWeb.Constants.Enums;
 using TodoWeb.Domains.AppsettingsConfigurations;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
@@ -28,7 +30,7 @@ namespace TodoWeb.Application.Services.Users
             _jwtSettings = jwtSettingOptions.Value;
         }
 
-        public async Task<int> Post(UserCreateViewModel user)
+        public async Task<User> Post(UserCreateViewModel user)
         {
             //var data = new Domains.Entities.User
             //{
@@ -44,7 +46,7 @@ namespace TodoWeb.Application.Services.Users
             data.Salting = salting;
             await _dbContext.Users.AddAsync(data);
             await _dbContext.SaveChangesAsync();
-            return data.Id;
+            return data;
 
         }
 
@@ -101,7 +103,7 @@ namespace TodoWeb.Application.Services.Users
             return user;
         }
 
-        public string GenerateRefreshToken(int userId)
+        public async Task<string> GenerateRefreshToken(int userId)
         {
             string refreshToken = HashHelper.GennerateRandomString(64);
             //refreshtoken cũng ko nên lưu dưới dạng raw data giống password,
@@ -116,23 +118,23 @@ namespace TodoWeb.Application.Services.Users
                 IsRevoked = false
             };
 
-            _dbContext.RefreshTokens.Add(data);
-            _dbContext.SaveChanges();
+            await _dbContext.RefreshTokens.AddAsync(data);
+            await _dbContext.SaveChangesAsync();
             return hashedRefreshToken;
 
         }
 
-        public void DeleteOldRefreshToken(int userId)
+        public async Task DeleteOldRefreshToken(int userId)
         {
-            var entity = _dbContext.RefreshTokens
+            var entity = await _dbContext.RefreshTokens
                 .Where(x => x.UserId == userId)
-                .ToList();
+                .ToListAsync();
             if (entity == null)
             {
                 return;
             }
             _dbContext.RefreshTokens.RemoveRange(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public User GetUserByRefreshToken(string refreshToken)
@@ -145,5 +147,28 @@ namespace TodoWeb.Application.Services.Users
             return user;
         }
 
+        public async Task<User?> GetUserById(int userId)
+        {
+            if(userId <= 0)
+            {
+                return null;
+            }
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return user;
+        }
+
+        public async Task<User?> ChangeUserRole(int userId, Role newRole)
+        {
+            var user = await GetUserById(userId);
+            if (user == null)
+            {
+                return null;
+            }
+            user.Role = newRole;
+            //không cần phải update vì đã dùng tracker của EF Core, nếu không dùng tracker thì sẽ cần phải update
+            //_dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return user;
+        }
     }
 }

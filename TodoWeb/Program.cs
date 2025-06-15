@@ -218,9 +218,10 @@ app.MapControllers();
 
 
 app.UseCors(option =>
-    option.WithOrigins("http://localhost:3000")
+    option.WithOrigins("http://localhost:3000", "https://localhost:7016")
     .AllowAnyMethod()
     .AllowAnyHeader()
+
 );
 
 //10 request trong 30s
@@ -248,7 +249,9 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     IgnoreAntiforgeryToken = true                                 // <--This
 });
 
-RecurringJob.AddOrUpdate<GenerateSchoolReportJob>("TestJob",
-    job => job.ExecuteAsync(), Cron.Minutely);
+//thường cần được gọi một lần lúc ứng dụng khởi động, nên thường vẫn sẽ nằm ở Program hoặc Startup.
+RecurringJob.AddOrUpdate<GenerateSchoolReportJob>("GenerateSchoolReport",
+    instanceJob => instanceJob.ExecuteAsync(), Cron.Minutely);
+
 
 app.Run();

@@ -1,0 +1,16 @@
+.google-error {
+  color: #d93025;
+  background-color: #fce8e6;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 14px;
+  border: 1px solid #fad2cf;
+  text-align: center;
+}
+
+#google-signin-button {
+  /* display: flex; */
+  justify-content: center;
+  margin: 10px 0;
+}

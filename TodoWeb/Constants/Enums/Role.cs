@@ -4,6 +4,7 @@
     {
         Admin, //0
         Staff, //1
-        User //2
+        User, //2
+        Banned, //3
     }
 }

@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using RazorLight;
 using TodoWeb.Application.ActionFilters;
+using TodoWeb.Application.BackgroundJobs;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Application.Services.School;
 using TodoWeb.Constants.Enums;
@@ -17,7 +18,7 @@ namespace TodoWeb.Controllers
     [ApiController]
     [Route("[controller]")]
     //[TypeFilter(typeof(AuthorizationFilter), Arguments = [new Role[] { Role.Admin, Role.User }])]
-    //[Authorize(Roles = "User, Admin")]//atribute này ko phục vụ cho session
+    [Authorize(Roles = "User, Admin")]//atribute này ko phục vụ cho session
     public class SchoolController : Controller
     {
         private readonly ISchoolService _schoolService;
@@ -142,10 +143,10 @@ namespace TodoWeb.Controllers
                 DateCreated = DateTime.Now.ToString("dd/MM/yyyy"),
                 Schools = schools.ToList()
             };
-
+            // sử dụng RazorLight để build file cshtml từ model và trả về htmlText để ironpdf chuyển sang pdf
             var engine = new RazorLightEngineBuilder()
-                .UseFileSystemProject(Path.Combine(Directory.GetCurrentDirectory(), "Template"))
-                .UseMemoryCachingProvider() // Cache file static để lần sau khỏi phải đọc - tạo
+                .UseFileSystemProject(Path.Combine(Directory.GetCurrentDirectory(), "Template"))//GetCurrentDirectory() trả về đường dẫn của project hiện tại
+                .UseMemoryCachingProvider() // Cache file static để lần sau khỏi phải đọc một lần nữa
                 .Build();
 
             string htmlText = await engine.CompileRenderAsync("SchoolReportDynamic.cshtml", model);
@@ -165,10 +166,10 @@ namespace TodoWeb.Controllers
         }
 
         [HttpGet("test-hangfire")]
-        public async Task<IActionResult> TestHangFire()
+        public IActionResult TestHangFire()
         {
             
-            string jobId =  BackgroundJob.Enqueue(() => Console.WriteLine("Hello, Hangfire!"));
+            string jobId =  BackgroundJob.Enqueue<GenerateSchoolReportJob>(instanceJob => instanceJob.ExecuteAsync());
 
             string jobId2 = BackgroundJob.Schedule(() => Console.WriteLine("This is a delayed job!"), TimeSpan.FromSeconds(10));
 

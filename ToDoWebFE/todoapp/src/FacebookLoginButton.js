@@ -16,6 +16,7 @@ export default function FacebookLoginButton() {
         window.FB.init({
           appId: "1024568333148565", // Replace with your actual Facebook App ID
           cookie: true,
+          status: true,
           xfbml: true,
           version: "v23.0", // Updated to latest stable version
         });

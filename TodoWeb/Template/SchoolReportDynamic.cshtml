@@ -4,7 +4,58 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>School Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #eaf6ff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
     <h1>School Report</h1>
@@ -16,16 +67,18 @@
         </tr>
         @foreach (var school in Model.Schools)
         {
-        <tr>
-            <th>@school.Id</th>
-            <th>@school.Name</th>
-            <th>@school.Address</th>
-        </tr>
+            <tr>
+                <td>@school.Id</td>
+                <td>@school.Name</td>
+                <td>@school.Address</td>
+            </tr>
         }
     </table>
-    <h2>Total: @Model.Schools.Count</h2>
-    <p>Author @@Model.Author</p>
-    <p>Date created @Model.DateCreated</p>
 
+    <div class="footer">
+        <p><strong>Total schools:</strong> @Model.Schools.Count</p>
+        <p><strong>Author:</strong> @Model.Author</p>
+        <p><strong>Date created:</strong> @Model.DateCreated</p>
+    </div>
 </body>
 </html>

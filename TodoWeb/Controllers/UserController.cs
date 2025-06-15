@@ -48,15 +48,15 @@ namespace TodoWeb.Controllers
             {
                 return BadRequest(ModelState);
             }
-            //var isSuccess = _userService.UserLogin(user);
-            //if (!isSuccess)
-            //{
-            //    return NotFound("Not Found user");
-            //}
             var user = _userService.UserLogin(loginViewModel);
             if (user == null)
             {
                 return NotFound("Username or password is wrong");
+            }
+            //kiểm tra xem user có bị chặn không, nếu bị chặn thì không cho đăng nhập
+            if (user.Role == Constants.Enums.Role.Banned)
+            {
+                return Forbid("Your account has been revoked. Please contact admin to support.");
             }
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("Role", user.Role.ToString());
@@ -77,6 +77,11 @@ namespace TodoWeb.Controllers
             if (user == null)
             {
                 return NotFound("Username or password is wrong");
+            }
+            //kiểm tra xem user có bị chặn không, nếu bị chặn thì không cho đăng nhập
+            if (user.Role == Constants.Enums.Role.Banned)
+            {
+                return Forbid("Your account has been revoked. Please contact admin to support.");
             }
             var claims = new List<Claim>
             {
@@ -101,23 +106,43 @@ namespace TodoWeb.Controllers
             try
             {
                 var payload = await _googleCredentialService.VerifyCredential(model.Credential);
-                var userId = await _userService.Post(new UserCreateViewModel
+                // Check if the payload is null or not
+                if (payload == null)
                 {
-                    EmailAddress = payload.Email,
-                    FullName = payload.Name,
-                    Password = "",
-                    Role = Constants.Enums.Role.User
-                });
+                    return BadRequest("Invalid Google credential.");
+                }
+                //kiểm tra xem email đã tồn tại trong db chưa, nếu chưa thì tạo mới user,
+                //có rồi thì chỉ cần cấp access token và refresh token mới
+                var existingUser = await _userService.GetUserByEmail(payload.Email);
+                if (existingUser != null && existingUser.Role == Constants.Enums.Role.Banned)
+                {
+                    return Forbid("Your account has been revoked. Please contact admin to support.");
+                }
+                if(existingUser == null){
+                    existingUser = await _userService.Post(new UserCreateViewModel
+                    {
+                        EmailAddress = payload.Email,
+                        FullName = payload.Name,
+                        Password = "",
+                        Role = Constants.Enums.Role.User
+                    });
+                }
 
                 //ToDo: Generate JWT token or set session
-                var token = _userService.GenerateJwt(new Domains.Entities.User {
-                    Id = userId,
-                    EmailAddress = payload.Email,
-                    FullName = payload.Name,
-                    Role = Constants.Enums.Role.User
-                });
+                //delete the old refresh token if it exists
+                await _userService.DeleteOldRefreshToken(existingUser.Id);
+                var accesstoken = _userService.GenerateJwt(existingUser);
+                var refreshToken = await _userService.GenerateRefreshToken(existingUser.Id);
+                //set refresh token in cookie
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = false, // Use Secure cookies in production
+                    Expires = DateTime.UtcNow.AddDays(30), // Set expiration for the cookie
+                };
+                HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
                 //Use an anonymous object instead of named parameters for 'object'
-                return Ok(new { Token = token, Payload = payload });
+                return Ok(new { Token = accesstoken, Payload = payload, RefreshToken = refreshToken });
             }
             catch
             {
@@ -139,24 +164,46 @@ namespace TodoWeb.Controllers
                 }
                 //nếu token hợp lệ thì lấy thông tin người dùng
                 var userInfo = await _facebookCredentialService.GetUserInfoAsync(model.AccessToken);
-                var userId = await _userService.Post(new UserCreateViewModel
+                if (userInfo == null)
                 {
-                    EmailAddress = userInfo.Email,
-                    FullName = userInfo.Name,
-                    Password = "",
-                    Role = Constants.Enums.Role.User
-                });
+                    return BadRequest("Failed to retrieve user information from Facebook.");
+                }
+                //kiểm tra xem email đã tồn tại trong db chưa, nếu chưa thì tạo mới user,
+                //có rồi thì chỉ cần cấp access token và refresh token mới
+                var existingUser = await _userService.GetUserByEmail(userInfo.Email);
+                if (existingUser != null && existingUser.Role == Constants.Enums.Role.Banned)
+                {
+                    return Forbid("Your account has been revoked. Please contact admin to support.");
+                    
+                }
+                if (existingUser == null)
+                {
+                    existingUser = await _userService.Post(new UserCreateViewModel
+                    {
+                        EmailAddress = userInfo.Email,
+                        FullName = userInfo.Name,
+                        Password = "",
+                        Role = Constants.Enums.Role.User
+                    });
+                }
 
-                //ToDo: Generate JWT token or set session
-                var token = _userService.GenerateJwt(new Domains.Entities.User
+                //ToDo: Generate access token and refresh token
+                //delete the old refresh token if it exists
+                await _userService.DeleteOldRefreshToken(existingUser.Id);
+                //generate new access token and refresh token
+                var accessToken = _userService.GenerateJwt(existingUser);
+                var refreshToken = await _userService.GenerateRefreshToken(existingUser.Id);
+                //set refresh token in cookie
+                var cookieOptions = new CookieOptions
                 {
-                    Id = userId,
-                    EmailAddress = userInfo.Email,
-                    FullName = userInfo.Name,
-                    Role = Constants.Enums.Role.User
-                });
+                    //HttpOnly = true,
+                    //tậm thời command lại do front  đang dùng http
+                    //Secure = true, // Use Secure cookies in production
+                    Expires = DateTime.UtcNow.AddDays(30), // Set expiration for the cookie
+                };
+                HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
                 //Use an anonymous object instead of named parameters for 'object'
-                return Ok(new { Token = token, Payload = userInfo });
+                return Ok(new { Token = accessToken, UserInfo = userInfo, RefreshToken = refreshToken });
             }
             catch
             {
@@ -179,11 +226,16 @@ namespace TodoWeb.Controllers
             {
                 return NotFound("Username or password is wrong");
             }
+            //kiểm tra xem user có bị chặn không, nếu bị chặn thì không cho đăng nhập
+            if (user.Role == Constants.Enums.Role.Banned)
+            {
+                return Forbid("Your account has been revoked. Please contact admin to support.");
+            }
             //Delete the old refresh token if it exists
-            _userService.DeleteOldRefreshToken(user.Id);
+            await _userService.DeleteOldRefreshToken(user.Id);
             // Generate JWT token and refresh token
             var accessToken = _userService.GenerateJwt(user);
-            var refreshToken = _userService.GenerateRefreshToken(user.Id);
+            var refreshToken = await _userService.GenerateRefreshToken(user.Id);
             //Set the refresh token in the session or cookie
             var cookieOptions = new CookieOptions
             {
@@ -196,7 +248,7 @@ namespace TodoWeb.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public IActionResult RefreshToken()
+        public async Task<IActionResult> RefreshToken()
         {
             //lấy refresh token từ cookie
             var isExist = HttpContext.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
@@ -210,11 +262,11 @@ namespace TodoWeb.Controllers
                 return Unauthorized("Invalid refresh token.");
             }
             // Delete the old refresh token
-            _userService.DeleteOldRefreshToken(user.Id);
+            await _userService.DeleteOldRefreshToken(user.Id);
 
             // Generate new access token and refresh token
             var accessToken = _userService.GenerateJwt(user);
-            var newRefreshToken = _userService.GenerateRefreshToken(user.Id);
+            var newRefreshToken = await _userService.GenerateRefreshToken(user.Id);
 
             var cookieOptions = new CookieOptions
             {
@@ -225,7 +277,6 @@ namespace TodoWeb.Controllers
 
             HttpContext.Response.Cookies.Append("RefreshToken", newRefreshToken, cookieOptions);
             return Ok(accessToken);
-
         }
 
         [HttpPost("Logout")]
@@ -234,7 +285,7 @@ namespace TodoWeb.Controllers
             //xóa access token ở cookie
             //phía client sẽ xóa access token
             // Delete the refresh token from the database
-            _userService.DeleteOldRefreshToken(userId);
+            await _userService.DeleteOldRefreshToken(userId);
             //xóa refresh token ở cookie
             HttpContext.Response.Cookies.Delete("RefreshToken");
             // Clear session
@@ -249,18 +300,27 @@ namespace TodoWeb.Controllers
         // User still keep access token, assume expire time is 15 minutes
 
         // BAN user's access token
-        // Create a authorize filter, cache contains black list access token
-        // Filter check if user's access token exist in the cache
-        // Yes => return Unauthorize
+        // Create a revoke check middleware, cache contains revoke userid with key "REVOKE_USER:{userId}"
+        // middleware check in the request pipeline has the userId 
+        //if userId is null, continue processing
+        // if has userId continue check if user's access token exist in the cache
+        // if has  => return forbidden status code 403 and message "Your account has been revoked. Please contact admin to support."
         // No => continue processing
+        
         [HttpPost("Revoke")]
-        public IActionResult Revoke(int userId)
+        public async Task<IActionResult> Revoke(int userId)
         {
-            //chặn ng dùng trong 10 phút, không cho truy cập vào hệ thống nữa, sau 10 phút thì có thể đăng nhập lại bình thường
+            //chặn ng dùng không cho truy cập vào hệ thống nữa, sau 10 phút thì có thể đăng nhập lại bình thường
+            //set role user to InActive-Banned
+            var user = await _userService.ChangeUserRole(userId, Constants.Enums.Role.Banned);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
             // Clear session and cookies 
             HttpContext.Session.Clear();
             // Delete the refresh token from the database
-            _userService.DeleteOldRefreshToken(userId);
+            await _userService.DeleteOldRefreshToken(userId);
             // Delete the refresh token cookie
             HttpContext.Response.Cookies.Delete("RefreshToken");
             // Add user to cache with key "REVOKE_USER:{userId}" and value true
