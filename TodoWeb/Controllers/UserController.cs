@@ -136,8 +136,8 @@ namespace TodoWeb.Controllers
                 //set refresh token in cookie
                 var cookieOptions = new CookieOptions
                 {
-                    HttpOnly = false,
-                    Secure = false, // Use Secure cookies in production
+                    HttpOnly = true,
+                    Secure = true, // Use Secure cookies in production
                     Expires = DateTime.UtcNow.AddDays(30), // Set expiration for the cookie
                 };
                 HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
@@ -196,9 +196,8 @@ namespace TodoWeb.Controllers
                 //set refresh token in cookie
                 var cookieOptions = new CookieOptions
                 {
-                    //HttpOnly = true,
-                    //tậm thời command lại do front  đang dùng http
-                    //Secure = true, // Use Secure cookies in production
+                    HttpOnly = true,
+                    Secure = true, // Use Secure cookies in production
                     Expires = DateTime.UtcNow.AddDays(30), // Set expiration for the cookie
                 };
                 HttpContext.Response.Cookies.Append("RefreshToken", refreshToken, cookieOptions);
@@ -207,7 +206,7 @@ namespace TodoWeb.Controllers
             }
             catch
             {
-                return BadRequest("Google credential verification failed.");
+                return BadRequest("Facebook credential verification failed.");
             }
             
         }
@@ -310,7 +309,7 @@ namespace TodoWeb.Controllers
         [HttpPost("Revoke")]
         public async Task<IActionResult> Revoke(int userId)
         {
-            //chặn ng dùng không cho truy cập vào hệ thống nữa, sau 10 phút thì có thể đăng nhập lại bình thường
+            //chặn ng dùng không cho truy cập vào hệ thống nữa
             //set role user to InActive-Banned
             var user = await _userService.ChangeUserRole(userId, Constants.Enums.Role.Banned);
             if (user == null)

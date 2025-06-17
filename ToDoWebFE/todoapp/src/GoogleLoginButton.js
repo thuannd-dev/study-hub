@@ -28,6 +28,7 @@ export default function GoogleLoginButton() {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
+      credentials: "include", // 👈 gửi kèm cookie
       body: JSON.stringify({ credential: response.credential }),
     })
       .then(async (res) => {

@@ -221,6 +221,7 @@ app.UseCors(option =>
     option.WithOrigins("http://localhost:3000", "https://localhost:7016")
     .AllowAnyMethod()
     .AllowAnyHeader()
+    .AllowCredentials()
 
 );
 

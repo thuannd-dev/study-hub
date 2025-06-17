@@ -62,6 +62,7 @@ export default function FacebookLoginButton() {
               "Content-Type": "application/json",
               Accept: "application/json",
             },
+            credentials: "include",
             body: JSON.stringify({
               accessToken: response.authResponse.accessToken,
             }),
