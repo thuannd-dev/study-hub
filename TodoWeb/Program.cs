@@ -172,10 +172,10 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,//Validate the server 
+        ValidateAudience = true,//Validate the recipient of the token is authorized to receive
+        ValidateLifetime = true,//Check if the token is not expired and the signing key of the issuer is valid
+        ValidateIssuerSigningKey = true,//Validate signature of the token 
         ClockSkew = TimeSpan.Zero,//độ trễ cho phép giữa server và client là 0
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSettings["SecretKey"])),
         ValidIssuer = jwtSettings["Issuer"],
@@ -222,6 +222,15 @@ app.UseCors(option =>
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
+    //Credentials include cookies and HTTP authentication schemes
+    //Mặc định, các truy vấn CORS không gửi hoặc thiết lập bất cứ cookie nào trên trình duyệt. Nếu muốn sử dụng cookie trong truy vấn đó,
+    //chúng ta phải đặt thuộc tính withCredentials của truy vấn bằng true
+    //AllowCredentials() sẽ cho phép cookie được gửi trong truy vấn CORS, nếu không có thì sẽ không gửi cookie trong truy vấn CORS
+    .SetPreflightMaxAge(TimeSpan.FromSeconds(10))
+    //đặt thời gian tối đa cho preflight request, nếu không thì sẽ gửi preflight request mỗi lần truy vấn CORS
+    //mặc định là 5 giây nhưng nhiều browser set cao hơn(chrome là 2 tiếng), nhưng có thể đặt cao hơn nếu cần thiết
+    //.WithExposedHeaders("X-Total-Count", "X-Page-Size") //expose headers cho client, nếu không thì client sẽ không thể truy cập được các header này
+
 
 );
 
