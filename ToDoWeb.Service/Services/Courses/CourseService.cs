@@ -42,9 +42,6 @@ namespace TodoWeb.Application.Services.Courses
             ////    .ToList();
 
             //var result = _mapper.Map<List<CourseViewModel>>(course);
-
-
-
             return result;
 
             //return query.Where(course => course.Status != Constants.Enums.Status.Deleted)

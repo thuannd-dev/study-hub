@@ -38,7 +38,12 @@ namespace TodoWeb.Application.MapperProfiles
             //map từ Student -> StudentViewModel
             CreateMap<Student, StudentViewModel>()
                 .ForMember(dest => dest.FullName, config => config.MapFrom(src => src.FirstName + " " + src.LastName))
-                .ForMember(dest => dest.SchoolName, config => config.MapFrom(src => src.School.Name));
+                .ForMember(dest => dest.SchoolName, config => config.MapFrom(src => src.School.Name))
+                .ForMember(dest => dest.Address, static config => config.MapFrom(static src => new Address
+                {
+                    Street = src.Address1 ?? String.Empty,
+                    ZipCode = src.Address2 ?? String.Empty
+                }));
 
             //map từ CourseStudent -> CourseViewModel
             CreateMap<CourseStudent, CourseViewModel>()

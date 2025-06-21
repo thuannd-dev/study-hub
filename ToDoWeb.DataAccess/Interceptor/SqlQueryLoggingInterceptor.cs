@@ -17,7 +17,7 @@ namespace TodoWeb.Infrastructures.Interceptor
             //do something 10s
 
             //var miliseconds = stopwatch.ElapsedMilliseconds; //10.000
-            using StreamWriter writer = new StreamWriter("D:\\NetProject\\TodoWeb\\TodoWeb\\sqllog.txt", append: true);//append true có nghĩa là ghi đè
+            using StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sqllogging.txt"), append: true);//append true có nghĩa là ghi đè
             //writer.WriteLine(command.CommandText);//command.CommnadText chính là cau sql của ban
             return base.ReaderExecuting(command, eventData, result);
         }
@@ -29,7 +29,7 @@ namespace TodoWeb.Infrastructures.Interceptor
             var miliseconds = stopwatch.ElapsedMilliseconds; //10.000
             if(miliseconds > 2)
             {
-                using StreamWriter writer = new StreamWriter("D:\\NetProject\\TodoWeb\\TodoWeb\\sqllog.txt", append: true);//append true có nghĩa là ghi đè
+                using StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sqllogging.txt"), append: true);//append true có nghĩa là ghi đè
                 writer.WriteLine(command.CommandText);//command.CommnadText chính là cau sql của ban
             }
             return base.ReaderExecuted(command, eventData, result);

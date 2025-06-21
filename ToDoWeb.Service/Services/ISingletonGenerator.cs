@@ -1,4 +1,6 @@
-﻿namespace TodoWeb.Application.Services
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace TodoWeb.Application.Services
 {
     public interface ISingletonGenerator
     {
@@ -18,7 +20,7 @@
 
         public Guid Generate()
         {
-            var guidGenerator = _serviceProvider.GetService<IGuidGenerator>();
+            var guidGenerator = _serviceProvider.GetRequiredService<IGuidGenerator>();
             return guidGenerator.Generate();
         } 
     } 

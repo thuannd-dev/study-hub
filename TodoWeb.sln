@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoWeb", "TodoWeb\TodoWeb.csproj", "{55AF5BFB-8FC8-4BAB-9850-116FE803BBBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoWeb.DataAccess", "ToDoWeb.DataAccess\ToDoWeb.DataAccess.csproj", "{909607E6-855E-4977-B7DB-DE104994569A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoWeb.Service", "ToDoWeb.Service\ToDoWeb.Service.csproj", "{3719C5DF-BF85-410F-A1D7-1879B8D66374}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,19 @@ Global
 		{55AF5BFB-8FC8-4BAB-9850-116FE803BBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55AF5BFB-8FC8-4BAB-9850-116FE803BBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55AF5BFB-8FC8-4BAB-9850-116FE803BBBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{909607E6-855E-4977-B7DB-DE104994569A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{909607E6-855E-4977-B7DB-DE104994569A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{909607E6-855E-4977-B7DB-DE104994569A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{909607E6-855E-4977-B7DB-DE104994569A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3719C5DF-BF85-410F-A1D7-1879B8D66374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3719C5DF-BF85-410F-A1D7-1879B8D66374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3719C5DF-BF85-410F-A1D7-1879B8D66374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3719C5DF-BF85-410F-A1D7-1879B8D66374}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {05E15C97-EA0A-4758-9548-8D1DB89559EE}
 	EndGlobalSection
 EndGlobal

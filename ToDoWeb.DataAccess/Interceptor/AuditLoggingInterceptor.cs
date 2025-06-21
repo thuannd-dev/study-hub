@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using TodoWeb.Domains.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace TodoWeb.Infrastructures.Interceptor
 {

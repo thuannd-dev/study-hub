@@ -48,4 +48,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domains\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToDoWeb.Service\ToDoWeb.Service.csproj" />
+  </ItemGroup>
+
 </Project>
