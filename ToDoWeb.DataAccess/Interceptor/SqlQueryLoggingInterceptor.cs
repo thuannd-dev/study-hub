@@ -17,7 +17,7 @@ namespace TodoWeb.Infrastructures.Interceptor
             //do something 10s
 
             //var miliseconds = stopwatch.ElapsedMilliseconds; //10.000
-            using StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sqllogging.txt"), append: true);//append true có nghĩa là ghi đè
+            //using StreamWriter writer = new StreamWriter(Path.Combine(Directory.GetCurrentDirectory(), "sqllog.txt"), append: true);//append true có nghĩa là ghi đè
             //writer.WriteLine(command.CommandText);//command.CommnadText chính là cau sql của ban
             return base.ReaderExecuting(command, eventData, result);
         }
@@ -29,7 +29,10 @@ namespace TodoWeb.Infrastructures.Interceptor
             var miliseconds = stopwatch.ElapsedMilliseconds; //10.000
             if(miliseconds > 2)
             {
-                using StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sqllogging.txt"), append: true);//append true có nghĩa là ghi đè
+                //AppDomain.CurrentDomain.BaseDirectory không phải là thư mục gốc dự án, mà là thư mục thực thi (tức là thư mục chứa .exe khi chạy)
+                //ví dụ: C:\Users\YourUserName\source\repos\YourProject\bin\Debug\net8.0\
+                //nên nếu muốn ghi vào thư mục gốc dự án thì cần phải dùng Directory.GetCurrentDirectory() => Path.Combine(Directory.GetCurrentDirectory(), "sqllog.txt")
+                using StreamWriter writer = new StreamWriter(Path.Combine(Directory.GetCurrentDirectory(), "sqllog.txt"), append: true);//append true có nghĩa là ghi đè
                 writer.WriteLine(command.CommandText);//command.CommnadText chính là cau sql của ban
             }
             return base.ReaderExecuted(command, eventData, result);
