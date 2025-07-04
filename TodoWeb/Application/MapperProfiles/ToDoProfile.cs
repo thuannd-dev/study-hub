@@ -7,6 +7,7 @@ using TodoWeb.Application.Dtos.QuestionModel;
 using TodoWeb.Application.Dtos.SchoolModel;
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Domains.Entities;
+using ToDoWeb.Service.Dtos.CourseModel;
 
 namespace TodoWeb.Application.MapperProfiles
 {

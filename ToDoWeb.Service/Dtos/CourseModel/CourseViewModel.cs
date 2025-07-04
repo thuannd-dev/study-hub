@@ -1,4 +1,4 @@
-﻿namespace TodoWeb.Application.Dtos.CourseModel
+﻿namespace ToDoWeb.Service.Dtos.CourseModel
 {
     public class CourseViewModel
     {

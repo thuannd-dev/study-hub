@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoWeb.Application.Dtos.CourseModel;
+using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.CourseStudentModel;
 using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Domains.Entities;
@@ -39,6 +41,37 @@ namespace TodoWeb.Application.Services.CourseStudents
                 return data.Id;
             }
             return -1;
+        }
+
+        public IEnumerable<CourseStudentDetailViewModel> GetCoursesDetail(int? courseId)
+        {
+            //build lên một câu query 
+            var query = _context.Course.AsQueryable();
+            //nếu courseId có giá trị thì lấy ra đúng course với id đó
+            if (courseId.HasValue)
+            {
+                query = query.Where(course => course.Id == courseId);
+                if (query.Count() == 0) return null;
+            }
+            //join
+            query = query.Where(course => course.Status != Constants.Enums.Status.Deleted)
+                .Include(course => course.CourseStudent)
+                .ThenInclude(courseStudent => courseStudent.Student);
+            //return query.Select(course => new CourseStudentDetailViewModel
+            //{
+            //    CourseId = course.Id,
+            //    CourseName = course.Name,
+            //    StartDate = course.StartDate,
+            //    Students = course.CourseStudent.Select(courseStudent => new Dtos.StudentModel.StudentViewModel
+            //    {
+            //        Id = courseStudent.Student.Id,
+            //        FullName = $"{courseStudent.Student.FirstName} {courseStudent.Student.LastName}",
+            //        Age = courseStudent.Student.Age,
+            //        Balance = courseStudent.Student.Balance,
+            //        SchoolName = courseStudent.Student.School.Name,
+            //    }).ToList()
+            //});
+            return _mapper.ProjectTo<CourseStudentDetailViewModel>(query);
         }
     }
 }

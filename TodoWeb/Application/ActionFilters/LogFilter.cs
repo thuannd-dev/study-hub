@@ -24,8 +24,7 @@ namespace TodoWeb.Application.ActionFilters
 
             context.Result = new ObjectResult(new 
             { 
-                message = @"An error occurred while proccessing your request.
-                            Please contact with admin for more information",
+                message = @"An error occurred while proccessing your request. Please contact with admin for more information",
                 error = exception.Message
             })
             {

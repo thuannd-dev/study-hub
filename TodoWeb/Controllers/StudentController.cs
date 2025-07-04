@@ -35,9 +35,9 @@ namespace TodoWeb.Controllers
         }
 
         [HttpGet("/AllStudents")]
-        public IActionResult GetAllStudents()
+        public async Task<IActionResult> GetAllStudents()
         {
-            var result = _studentService.GetStudents();
+            var result = await _studentService.GetStudents();
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
@@ -49,9 +49,9 @@ namespace TodoWeb.Controllers
         }
 
         [HttpGet("{studentId}")]
-        public IActionResult GetStudent(int studentId)
+        public async Task<IActionResult> GetStudent(int studentId)
         {
-            var result = _studentService.GetStudent(studentId);
+            var result = await _studentService.GetStudent(studentId);
             return Ok(result);
         }
 

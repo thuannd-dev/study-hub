@@ -17,6 +17,8 @@ using TodoWeb.Application.Services.Users;
 using TodoWeb.Application.Services;
 using TodoWeb.Application.Services.Users.GoogleService;
 using TodoWeb.Application.Services.Users.FacebookService;
+using ToDoWeb.DataAccess.Repositories.CourseAccess;
+using ToDoWeb.DataAccess.Repositories.StudentAccess;
 
 namespace TodoWeb.Infrastructures.Extensions
 {
@@ -46,6 +48,7 @@ namespace TodoWeb.Infrastructures.Extensions
             serviceCollection.AddAutoMapper(typeof(ExamSubmissionProfile));
             serviceCollection.AddAutoMapper(typeof(ExamSubmissionDetailsProfile));
             serviceCollection.AddAutoMapper(typeof(UserProfile));
+            serviceCollection.AddAutoMapper(typeof(CourseProfile));
             serviceCollection.AddSingleton<LogMiddleware>();
             serviceCollection.AddSingleton<RateLimitMiddleware>();
             serviceCollection.AddSingleton<RevokeCheckMiddleware>();
@@ -53,6 +56,8 @@ namespace TodoWeb.Infrastructures.Extensions
             serviceCollection.AddSingleton<ICacheService, CacheService>();
             serviceCollection.AddSingleton<IGoogleCredentialService, GoogleCredentialService>();
             serviceCollection.AddSingleton<IFacebookCredentialService, FacebookCredentialService>();
+            serviceCollection.AddScoped<ICourseRepository, CourseRepository>();
+            serviceCollection.AddScoped<IStudentRepository, StudentRepository>();
 
         }
     }

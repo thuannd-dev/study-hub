@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,6 +12,7 @@ using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Application.Extensions;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
+using ToDoWeb.DataAccess.Repositories.StudentAccess;
 
 namespace TodoWeb.Application.Services.Students
 {
@@ -22,27 +24,36 @@ namespace TodoWeb.Application.Services.Students
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
-        public StudentService(IApplicationDbContext context, IMapper mapper, IMemoryCache cache)
+        private readonly IStudentRepository _studentRepository;
+        public StudentService(IApplicationDbContext context, IStudentRepository studentRepository,
+            IMapper mapper, IMemoryCache cache)
         {
             _context = context;
             _mapper = mapper;
             _cache = cache;
+            _studentRepository = studentRepository;
         }
-        public IEnumerable<StudentViewModel> GetStudent(int? studentId)
+        //public IEnumerable<StudentViewModel> GetStudent(int? studentId)
+        //{
+        //    var query = _context.Students
+        //        .Where(student => student.Status != Constants.Enums.Status.Deleted)
+        //        .AsQueryable();//build leen 1 cau query
+        //    if (studentId.HasValue)
+        //    {
+        //        query = query.Where(x => x.Id == studentId);//add theem ddk 
+        //    }
+        //    query = query.Include(student => student.School);
+        //    var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+        //    return result;
+        //}
+
+        public async Task<IEnumerable<StudentViewModel>> GetStudent(int? studentId)
         {
-            var query = _context.Students
-                .Where(student => student.Status != Constants.Enums.Status.Deleted)
-                .AsQueryable();//build leen 1 cau query
-            if (studentId.HasValue)
-            {
-                query = query.Where(x => x.Id == studentId);//add theem ddk 
-            }
-            query = query.Include(student => student.School);
-            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
-            return result;
+            var students = await _studentRepository.GetStudentsAsync(studentId, student => student.School);
+            return _mapper.Map<IEnumerable<StudentViewModel>>(students);
         }
 
-        public IEnumerable<StudentViewModel> GetStudents()
+        public async Task<IEnumerable<StudentViewModel>?> GetStudents()
         {
             //var data = _cache.Get<IEnumerable<StudentViewModel>>(STUDENT_KEY);
             //if (data == null)
@@ -53,22 +64,24 @@ namespace TodoWeb.Application.Services.Students
             //    _cache.Set(STUDENT_KEY, data, cacheOptions);
             //}
             //return data;
-            var data = _cache.GetOrCreate(STUDENT_KEY, entry =>
+            var data = await _cache.GetOrCreateAsync(STUDENT_KEY, async entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromSeconds(30);//sliding cập nhật lại thời gian ở mỗi lần request
-                return GetAllStudent();
+                return await GetAllStudent();
             });
             return data;
         }
 
-        private IEnumerable<StudentViewModel> GetAllStudent()
+
+        private async Task<IEnumerable<StudentViewModel>> GetAllStudent()
         {
-            var query = _context.Students
-                .Where(student => student.Status != Constants.Enums.Status.Deleted)
-                .Include(student => student.School)
-                .AsQueryable();
-            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
-            return result;
+            //var query = _context.Students
+            //    .Where(student => student.Status != Constants.Enums.Status.Deleted)
+            //    .Include(student => student.School)
+            //    .AsQueryable();
+            //var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            //return result;
+            return await GetStudent(null);
         }
 
 

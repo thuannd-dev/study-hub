@@ -1,4 +1,4 @@
-﻿using TodoWeb.Application.Dtos.CourseModel;
+﻿using ToDoWeb.Service.Dtos.CourseModel;
 
 namespace TodoWeb.Application.Dtos.CourseStudentDetailModel
 {
