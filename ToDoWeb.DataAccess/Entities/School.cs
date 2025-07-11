@@ -1,8 +1,9 @@
 ﻿using TodoWeb.Constants.Enums;
+using ToDoWeb.DataAccess.Entities;
 
 namespace TodoWeb.Domains.Entities
 {
-    public class School : IDelete
+    public class School : IEntity, IDelete
     {
         public int Id { get; set; }
         public string Name { get; set; }

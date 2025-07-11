@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using TodoWeb.Domains.Entities;
+﻿using TodoWeb.Domains.Entities;
+using ToDoWeb.DataAccess.Repositories.GenericAccess;
 
 namespace ToDoWeb.DataAccess.Repositories.StudentAccess
 {
-    public interface IStudentRepository
+    public interface IStudentRepository : IGenericRepository<Student>
     {
-        Task<IEnumerable<Student>> GetStudentsAsync(int? studentId, Expression<Func<Student, object>>? include);
     }
 }

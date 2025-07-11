@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using TodoWeb.Application.ActionFilters;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
+using TodoWeb.Application.Services.CourseStudents;
 using TodoWeb.Application.Services.Students;
 using TodoWeb.Domains.Entities;
 
@@ -15,10 +16,12 @@ namespace TodoWeb.Controllers
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
+        private readonly ICourseStudentService _courseStudentService;
 
-        public StudentController(IStudentService studentService)
+        public StudentController(IStudentService studentService, ICourseStudentService courseStudentService)
         {
             _studentService = studentService;
+            _courseStudentService = courseStudentService;
         }
         [HttpGet("/search")]
         public IActionResult SearchStudents([FromQuery] string search_query)
@@ -37,7 +40,7 @@ namespace TodoWeb.Controllers
         [HttpGet("/AllStudents")]
         public async Task<IActionResult> GetAllStudents()
         {
-            var result = await _studentService.GetStudents();
+            var result = await _studentService.GetAllStudents();
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
@@ -51,7 +54,7 @@ namespace TodoWeb.Controllers
         [HttpGet("{studentId}")]
         public async Task<IActionResult> GetStudent(int studentId)
         {
-            var result = await _studentService.GetStudent(studentId);
+            var result = await _studentService.GetStudents(studentId);
             return Ok(result);
         }
 
@@ -76,29 +79,30 @@ namespace TodoWeb.Controllers
         [HttpGet("/StudentDetails/{id}")]
         public StudentCourseDetailViewModel GetStudentDetails(int id)
         {
-            return _studentService.GetStudentDetails(id);
+            return _courseStudentService.GetStudentDetails(id);
         }
 
         [HttpPost]
-        public IActionResult Post(StudentViewModel student)
+        public async Task<IActionResult> Post(StudentViewModel student)
         {
             
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            return Ok(_studentService.Post(student));
+            return CreatedAtAction(nameof(GetStudent), new { studentId = student.Id }, await _studentService.Post(student));
         }
         [HttpPut]
-        public int Put(StudentViewModel student)
+        public async Task<IActionResult> Put(StudentViewModel student)
         {
-            return _studentService.Put(student);
+            await _studentService.Put(student);
+            return NoContent();
         }
 
         [HttpDelete]
-        public int Delete(int studentID)
+        public async Task<int> Delete(int studentID)
         {
-            return _studentService.Delete(studentID);
+            return await _studentService.Delete(studentID);
         }
     }
 }

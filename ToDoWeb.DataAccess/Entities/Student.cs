@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TodoWeb.Constants.Enums;
+using ToDoWeb.DataAccess.Entities;
 
 namespace TodoWeb.Domains.Entities
 {
     [Table("Students")]
-    public class Student : IDelete
+    public class Student : IEntity, IDelete
     {
         [Key]//define primary key cua table, identity (ko the dinh nghia id)
         [DatabaseGenerated(DatabaseGeneratedOption.None)]//none có nghĩa là khóa chính dễ dãi, cho làm mọi thứ, có thể chỉnh id

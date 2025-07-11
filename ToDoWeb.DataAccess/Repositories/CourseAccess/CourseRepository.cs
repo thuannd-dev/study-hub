@@ -9,13 +9,15 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TodoWeb.Constants.Enums;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
+using ToDoWeb.DataAccess.Repositories.GenericAccess;
 
 namespace ToDoWeb.DataAccess.Repositories.CourseAccess
 {
-    public class CourseRepository : ICourseRepository
+    public class CourseRepository : GenericRepository<Course>, ICourseRepository
     {
-        private readonly IApplicationDbContext _dbContext;
-        public CourseRepository(IApplicationDbContext dbContext)
+        private readonly ApplicationDbContext _dbContext;
+        //private readonly IGenericRepository<Course> _genericRepo;
+        public CourseRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }
@@ -40,32 +42,32 @@ namespace ToDoWeb.DataAccess.Repositories.CourseAccess
         //Chỉ nên dùng Task.WhenAll khi các truy vấn không phụ thuộc vào nhau và không sử dụng chung DbContext
         //Nếu dùng cùng context thì await lần lượt từng truy vấn để tránh lỗi
 
-        public async Task<IEnumerable<Course>> GetCoursesAsync(int? courseId)
-        {
-            // Build a query to get courses
-            var query = _dbContext.Course.AsQueryable();
-            // If courseId has a value, filter by that courseId
-            if (courseId.HasValue)
-            {
-                query = query.Where(course => course.Id == courseId);
-            }
-            //if (!query.Any()) return Enumerable.Empty<Course>(); // Return empty Enumerable course if no courses found
-            //return query.ToList(); // Return the list of courses
+        //public async Task<IEnumerable<Course>> GetCoursesAsync(int? courseId)
+        //{
+        //    // Build a query to get courses
+        //    var query = _dbContext.Course.AsQueryable();
+        //    // If courseId has a value, filter by that courseId
+        //    if (courseId.HasValue)
+        //    {
+        //        query = query.Where(course => course.Id == courseId);
+        //    }
+        //    //if (!query.Any()) return Enumerable.Empty<Course>(); // Return empty Enumerable course if no courses found
+        //    //return query.ToList(); // Return the list of courses
 
-            //Làm như trên sẽ khiến truy vấn hai lần xuống database, vì any() sẽ thực hiện một truy vấn để kiểm tra xem có bản ghi nào không,
-            //toList() sẽ thực hiện một truy vấn khác để lấy dữ liệu.
-            //Thay vào đó, ta sử dụng ToList() để lấy tất cả các bản ghi và sau đó kiểm tra xem danh sách có rỗng hay không.
-            //**Lưu ý : Chỉ any khi cần kiểm tra sự tồn tại của bản ghi mà không cần lấy dữ liệu sau đó, nếu cần lấy dữ liệu thì chỉ cần dùng ToList() hoặc ToArray() là đủ.**
-            var courses = await query.ToListAsync(); // Get all courses as a list
-            // Return empty Enumerable if no courses found, otherwise return the list of courses
-            return courses.Count == 0 ? Enumerable.Empty<Course>() : courses;
-        }
+        //    //Làm như trên sẽ khiến truy vấn hai lần xuống database, vì any() sẽ thực hiện một truy vấn để kiểm tra xem có bản ghi nào không,
+        //    //toList() sẽ thực hiện một truy vấn khác để lấy dữ liệu.
+        //    //Thay vào đó, ta sử dụng ToList() để lấy tất cả các bản ghi và sau đó kiểm tra xem danh sách có rỗng hay không.
+        //    //**Lưu ý : Chỉ any khi cần kiểm tra sự tồn tại của bản ghi mà không cần lấy dữ liệu sau đó, nếu cần lấy dữ liệu thì chỉ cần dùng ToList() hoặc ToArray() là đủ.**
+        //    var courses = await query.ToListAsync(); // Get all courses as a list
+        //    // Return empty Enumerable if no courses found, otherwise return the list of courses
+        //    return courses.Count == 0 ? Enumerable.Empty<Course>() : courses;
+        //}
 
-        public async Task<Course?> GetCourseByIdAsync(int courseId)
-        {
-            //Find sẽ tìm trong context của DbContext trước, nếu không có thì mới truy vấn xuống database
-            return await _dbContext.Course.FindAsync(courseId);
-        }
+        //public async Task<Course?> GetCourseByIdAsync(int courseId)
+        //{
+        //    //Find sẽ tìm trong context của DbContext trước, nếu không có thì mới truy vấn xuống database
+        //    return await _dbContext.Course.FindAsync(courseId);
+        //}
 
         public async Task<Course?> GetCourseByNameAsync(string courseName)
         {
@@ -74,50 +76,99 @@ namespace ToDoWeb.DataAccess.Repositories.CourseAccess
                 .SingleOrDefaultAsync(c => c.Name == courseName);
         }
 
-        public async Task<int> AddCourseAsync(Course course)
-        {
-            await _dbContext.Course.AddAsync(course);
-            //Change tracker sẽ theo dõi các thay đổi của entity này, giá trị của id lúc
-            //này là giá trị mặc định của kiểu dữ liệu int (0)
-            await _dbContext.SaveChangesAsync();
-            //Sau khi save changes, id sẽ được cập nhật với giá trị mới từ database
-            return course.Id;
+        //public async Task<int> AddCourseAsync(Course course)
+        //{
+        //    await _dbContext.Course.AddAsync(course);
+        //    //Change tracker sẽ theo dõi các thay đổi của entity này, giá trị của id lúc
+        //    //này là giá trị mặc định của kiểu dữ liệu int (0)
+        //    await _dbContext.SaveChangesAsync();
+        //    //Sau khi save changes, id sẽ được cập nhật với giá trị mới từ database
+        //    return course.Id;
 
-        }
+        //}
 
-        public async Task<int> UpdateCourseAsync(Course course)
-        {
-            //Nên kiểm tra xem course có tồn tại trong database hay không trước khi cập nhật
-            //Bởi vì mỗi operation nên independent với nhau, nếu chúng ta phụ thuộc vào nhau thì sẽ khó bảo trì-maintance hơn
-            var existingCourse = await GetCourseByIdAsync(course.Id);
-            if (existingCourse == null)
-            {
-                throw new ArgumentException($"Course with ID {course.Id} does not exist.");
-            }
-            //_dbContext.Course.Update(course);
-            //cách-way này sẽ Đánh dấu toàn bộ entity course là Modified,
-            //tức là EF sẽ update tất cả các field, bất kể-regardless có thay đổi hay không.
-            _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
-            // Chỉ cập nhật các trường đã thay đổi, giữ nguyên các trường không thay đổi
-            return await _dbContext.SaveChangesAsync();
-            //return number of state entries written to the database,
-        }
+        //public async Task<int> UpdateCourseAsync(Course course)
+        //{
+        //    //Nên kiểm tra xem course có tồn tại trong database hay không trước khi cập nhật
+        //    //Bởi vì mỗi operation nên independent với nhau, nếu chúng ta phụ thuộc vào nhau thì sẽ khó bảo trì-maintance hơn
+        //    var existingCourse = await GetCourseByIdAsync(course.Id);
+        //    if (existingCourse == null)
+        //    {
+        //        throw new ArgumentException($"Course with ID {course.Id} does not exist.");
+        //    }
+        //    //_dbContext.Course.Update(course);
+        //    //cách-way này sẽ Đánh dấu toàn bộ entity course là Modified,
+        //    //tức là EF sẽ update tất cả các field, bất kể-regardless có thay đổi hay không.
+        //    _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+        //    // Chỉ cập nhật các trường đã thay đổi, giữ nguyên các trường không thay đổi
+        //    return await _dbContext.SaveChangesAsync();
+        //    //return number of state entries written to the database,
+        //}
 
-        public async Task<int> DeleteCourseAsync(int courseId)
-        {
-            var course = await GetCourseByIdAsync(courseId);
-            if (course == null)
-            {
-                throw new ArgumentException($"Course with ID {courseId} does not exist.");
-            }
-            //_dbContext.Entry(course).State = EntityState.Deleted;
-            //cách này sẽ đánh dấu toàn bộ entity course là Deleted, tức là EF sẽ xóa toàn bộ entity này khỏi database
-            //Dùng khi xóa lượng lớn entities cùng lúc- bulk delete logic
-            _dbContext.Course.Remove(course);
-            //cách này sẽ đánh dấu entity course là Deleted, tức là EF sẽ xóa entity này khỏi database, dùng khi xóa một entity đơn lẻ
-            await _dbContext.SaveChangesAsync();
-            return courseId;
+        //public async Task<int> DeleteCourseAsync(int courseId)
+        //{
+        //    var course = await GetCourseByIdAsync(courseId);
+        //    if (course == null)
+        //    {
+        //        throw new ArgumentException($"Course with ID {courseId} does not exist.");
+        //    }
+        //    //_dbContext.Entry(course).State = EntityState.Deleted;
+        //    //cách này sẽ đánh dấu toàn bộ entity course là Deleted, tức là EF sẽ xóa toàn bộ entity này khỏi database
+        //    //Dùng khi xóa lượng lớn entities cùng lúc- bulk delete logic
+        //    _dbContext.Course.Remove(course);
+        //    //cách này sẽ đánh dấu entity course là Deleted, tức là EF sẽ xóa entity này khỏi database, dùng khi xóa một entity đơn lẻ
+        //    await _dbContext.SaveChangesAsync();
+        //    return courseId;
 
-        }
+        //}
+        //public async Task<int> UpdateCourseAsync(Course course)
+        //{
+        //    //Nên kiểm tra xem course có tồn tại trong database hay không trước khi cập nhật
+        //    //Bởi vì mỗi operation nên independent với nhau, nếu chúng ta phụ thuộc vào nhau thì sẽ khó bảo trì-maintance hơn
+        //    var existingCourse = await GetCourseByIdAsync(course.Id);
+        //    if (existingCourse == null)
+        //    {
+        //        throw new ArgumentException($"Course with ID {course.Id} does not exist.");
+        //    }
+        //    //_dbContext.Course.Update(course);
+        //    //cách-way này sẽ Đánh dấu toàn bộ entity course là Modified,
+        //    //tức là EF sẽ update tất cả các field, bất kể-regardless có thay đổi hay không.
+        //    _dbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+        //    // Chỉ cập nhật các trường đã thay đổi, giữ nguyên các trường không thay đổi
+        //    return await _dbContext.SaveChangesAsync();
+        //    //return number of state entries written to the database,
+        //}
+
+        //public async Task<int> DeleteCourseAsync(int courseId)
+        //{
+        //    var course = await GetCourseByIdAsync(courseId);
+        //    if (course == null)
+        //    {
+        //        throw new ArgumentException($"Course with ID {courseId} does not exist.");
+        //    }
+        //    //_dbContext.Entry(course).State = EntityState.Deleted;
+        //    //cách này sẽ đánh dấu toàn bộ entity course là Deleted, tức là EF sẽ xóa toàn bộ entity này khỏi database
+        //    //Dùng khi xóa lượng lớn entities cùng lúc- bulk delete logic
+        //    _dbContext.Course.Remove(course);
+        //    //cách này sẽ đánh dấu entity course là Deleted, tức là EF sẽ xóa entity này khỏi database, dùng khi xóa một entity đơn lẻ
+        //    await _dbContext.SaveChangesAsync();
+        //    return courseId;
+
+        //}
+
+       // public Task<IEnumerable<Course>> GetAllAsync(int? id)
+       //=> _genericRepo.GetAllAsync(id);
+
+       // public Task<Course?> GetByIdAsync(int id)
+       //     => _genericRepo.GetByIdAsync(id);
+
+       // public Task<int> AddAsync(Course course)
+       //     => _genericRepo.AddAsync(course);
+
+       // public Task<int> UpdateAsync(Course course)
+       //     => _genericRepo.UpdateAsync(course);
+
+       // public Task<int> DeleteAsync(Course course)
+       //     => _genericRepo.DeleteAsync(course);
     }  
 }

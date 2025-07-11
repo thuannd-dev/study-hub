@@ -10,3 +10,127 @@ WHERE [c].[Id] = @__courseId_0
 SELECT [c].[Id], [c].[CreateAt], [c].[CreateBy], [c].[DeleteAt], [c].[DeleteBy], [c].[Name], [c].[StartDate], [c].[Status], [c].[UpdateAt], [c].[UpdateBy]
 FROM [Course] AS [c]
 WHERE [c].[Id] = @__courseId_0
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance], COALESCE([s].[Address1], N'') AS [Street], COALESCE([s].[Address2], N'') AS [ZipCode]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%sd%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'')) LIKE N'%sd%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%sd%' OR LOWER([s0].[Name]) LIKE N'%sd%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%sd%')
+SELECT [s].[Id], COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') AS [FullName], [s].[Age], [s0].[Name] AS [SchoolName], [s].[Balance], COALESCE([s].[Address1], N'') AS [Street], COALESCE([s].[Address2], N'') AS [ZipCode]
+FROM [Students] AS [s]
+INNER JOIN [School] AS [s0] ON [s].[SId] = [s0].[Id]
+WHERE [s].[Status] <> 3 AND (LOWER(CONVERT(varchar(11), [s].[Id])) LIKE '%th%' OR LOWER(COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'')) LIKE N'%th%' OR LOWER(CONVERT(varchar(11), [s].[Age])) LIKE '%th%' OR LOWER([s0].[Name]) LIKE N'%th%' OR LOWER(CONVERT(varchar(100), [s].[Balance])) LIKE '%th%')
+SELECT [s0].[Id], [s0].[Address1], [s0].[Address2], [s0].[Age], [s0].[Balance], [s0].[DateOfBirth], [s0].[DeleteAt], [s0].[DeleteBy], [s0].[FirstName], [s0].[LastName], [s0].[SId], [s0].[Status], [s1].[Id], [s1].[CourseId], [s1].[StudentId], [s1].[Id0], [s1].[CreateAt], [s1].[CreateBy], [s1].[DeleteAt], [s1].[DeleteBy], [s1].[Name], [s1].[StartDate], [s1].[Status], [s1].[UpdateAt], [s1].[UpdateBy]
+FROM (
+    SELECT TOP(1) [s].[Id], [s].[Address1], [s].[Address2], [s].[Age], [s].[Balance], [s].[DateOfBirth], [s].[DeleteAt], [s].[DeleteBy], [s].[FirstName], [s].[LastName], [s].[SId], [s].[Status]
+    FROM [Students] AS [s]
+    WHERE [s].[Status] <> 3 AND [s].[Id] = @__id_0
+) AS [s0]
+LEFT JOIN (
+    SELECT [c].[Id], [c].[CourseId], [c].[StudentId], [c0].[Id] AS [Id0], [c0].[CreateAt], [c0].[CreateBy], [c0].[DeleteAt], [c0].[DeleteBy], [c0].[Name], [c0].[StartDate], [c0].[Status], [c0].[UpdateAt], [c0].[UpdateBy]
+    FROM [CourseStudent] AS [c]
+    INNER JOIN [Course] AS [c0] ON [c].[CourseId] = [c0].[Id]
+) AS [s1] ON [s0].[Id] = [s1].[StudentId]
+ORDER BY [s0].[Id], [s1].[Id]
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Students] ([Id], [Address1], [Address2], [Balance], [DateOfBirth], [DeleteAt], [DeleteBy], [FirstName], [LastName], [SId], [Status])
+OUTPUT INSERTED.[Age]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Students] ([Id], [Address1], [Address2], [Balance], [DateOfBirth], [DeleteAt], [DeleteBy], [FirstName], [LastName], [SId], [Status])
+OUTPUT INSERTED.[Age]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Students] ([Id], [Address1], [Address2], [Balance], [DateOfBirth], [DeleteAt], [DeleteBy], [FirstName], [LastName], [SId], [Status])
+OUTPUT INSERTED.[Age]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Students] ([Id], [Address1], [Address2], [Balance], [DateOfBirth], [DeleteAt], [DeleteBy], [FirstName], [LastName], [SId], [Status])
+OUTPUT INSERTED.[Age]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10);
+
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [AuditLog] ([Action], [CreatedAt], [EntityName], [NewValue], [OldValue])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Students] AS [s]
+        WHERE COALESCE([s].[FirstName], N'') + N' ' + COALESCE([s].[LastName], N'') = @__fullName_0) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END

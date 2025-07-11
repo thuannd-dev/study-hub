@@ -11,7 +11,7 @@ using TodoWeb.Infrastructures;
 
 namespace TodoWeb.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    
     [Migration("20250606122346_refresh_token2")]
     partial class refresh_token2
     {

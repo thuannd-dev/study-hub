@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TodoWeb.Domains.Entities;
+using ToDoWeb.DataAccess.Repositories.GenericAccess;
 
 namespace ToDoWeb.DataAccess.Repositories.CourseAccess
 {
-    public interface ICourseRepository
+    public interface ICourseRepository : IGenericRepository<Course>
     {
-        Task<int> AddCourseAsync(Course course);
-        Task<int> DeleteCourseAsync(int courseId);
-        Task<Course?> GetCourseByIdAsync(int courseId);
         Task<Course?> GetCourseByNameAsync(string courseName);
-        Task<IEnumerable<Course>> GetCoursesAsync(int? courseId);
-        Task<int> UpdateCourseAsync(Course course);
+        //Task<IEnumerable<Course>> GetAllAsync(int? id);
+        //Task<Course?> GetByIdAsync(int id);
+        //Task<int> AddAsync(Course course);
+        //Task<int> UpdateAsync(Course course);
+        //Task<int> DeleteAsync(Course course);
     }
 }

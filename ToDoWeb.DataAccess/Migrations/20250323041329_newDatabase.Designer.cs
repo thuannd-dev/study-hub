@@ -11,7 +11,6 @@ using TodoWeb.Infrastructures;
 
 namespace TodoWeb.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250323041329_newDatabase")]
     partial class newDatabase
     {

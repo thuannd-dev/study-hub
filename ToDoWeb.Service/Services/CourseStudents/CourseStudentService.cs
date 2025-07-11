@@ -73,5 +73,34 @@ namespace TodoWeb.Application.Services.CourseStudents
             //});
             return _mapper.ProjectTo<CourseStudentDetailViewModel>(query);
         }
+
+        public StudentCourseDetailViewModel GetStudentDetails(int id)
+        {
+            var query = _context.Students
+                .Where(student => student.Status != Constants.Enums.Status.Deleted)
+                .Include(student => student.CourseStudent)
+                .ThenInclude(cs => cs.Course);
+
+            var student = query.FirstOrDefault(x => x.Id == id);//không dùng where bởi vì trả list
+            //excute lúc này luôn, excute khi mình chấm cái gì đó mà kéo dữ liệu từ database thì nó sẽ excute 
+            if (student == null)
+            {
+                return null;
+            }
+            //projectto dùng khi muốn map một câu query
+            //còn map thì dùng khi muốn map một object
+            return _mapper.Map<StudentCourseDetailViewModel>(student);
+
+            //return new StudentCourseDetailViewModel
+            //{
+            //    StudentId = student.Id,
+            //    StudentName = student.FirstName + " " + student.LastName,
+            //    Courses = student.CourseStudent.Select(cs => new CourseViewModel
+            //    {
+            //        CourseId = cs.CourseId,
+            //        CourseName = cs.Course.Name
+            //    }).ToList()
+            //};
+        }
     }
 }

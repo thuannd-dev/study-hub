@@ -11,7 +11,7 @@ using TodoWeb.Infrastructures;
 
 namespace TodoWeb.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    
     [Migration("20250509124904_updateUserTable")]
     partial class updateUserTable
     {

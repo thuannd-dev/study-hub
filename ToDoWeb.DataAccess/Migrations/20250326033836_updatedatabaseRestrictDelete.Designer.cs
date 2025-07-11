@@ -11,7 +11,7 @@ using TodoWeb.Infrastructures;
 
 namespace TodoWeb.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    
     [Migration("20250326033836_updatedatabaseRestrictDelete")]
     partial class updatedatabaseRestrictDelete
     {

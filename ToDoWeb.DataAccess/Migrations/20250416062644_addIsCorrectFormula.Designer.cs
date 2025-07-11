@@ -11,7 +11,6 @@ using TodoWeb.Infrastructures;
 
 namespace TodoWeb.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250416062644_addIsCorrectFormula")]
     partial class addIsCorrectFormula
     {

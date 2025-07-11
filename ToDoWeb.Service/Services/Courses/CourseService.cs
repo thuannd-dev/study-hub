@@ -58,7 +58,7 @@ namespace TodoWeb.Application.Services.Courses
         public async Task<IEnumerable<CourseViewModel>> GetCourses(int? courseId)//ở đây không phải hiểu là hàm có nhận vào giá trị hay không đều được
                                                                      //mà phải hiểu là hàm nhận vào giá trị khác null hoặc là null
         {
-            var courses = await _courseRepository.GetCoursesAsync(courseId);
+            var courses = await _courseRepository.GetAllAsync(courseId);
             return _mapper.Map<IEnumerable<CourseViewModel>>(courses);
         }
 
@@ -87,7 +87,7 @@ namespace TodoWeb.Application.Services.Courses
 
             var data = _mapper.Map<Course>(course);
 
-            return await _courseRepository.AddCourseAsync(data);
+            return await _courseRepository.AddAsync(data);
         }
 
         //public int Put(CourseViewModel course)//src
@@ -113,17 +113,17 @@ namespace TodoWeb.Application.Services.Courses
 
         public async Task<int> Put(CourseViewModel courseViewModel)//src
         {
-            var oldCourse = await _courseRepository.GetCourseByIdAsync(courseViewModel.CourseId);
+            var oldCourse = await _courseRepository.GetByIdAsync(courseViewModel.CourseId);
             if (oldCourse == null 
                 || oldCourse.Status == Constants.Enums.Status.Deleted)
             {
                 return -1;
             }
             var dupCourseName = await _courseRepository
-                .GetCourseByNameAsync(courseViewModel.CourseName);
+                .GetCourseByNameAsync(courseViewModel.CourseName!);
             if (dupCourseName != null) return -1;
             _mapper.Map(courseViewModel, oldCourse);
-            await _courseRepository.UpdateCourseAsync(oldCourse);
+            await _courseRepository.UpdateAsync(oldCourse);
             return oldCourse.Id;
         }
 
@@ -142,7 +142,13 @@ namespace TodoWeb.Application.Services.Courses
 
         public async Task<int> Delete(int courseId)
         {
-            return await _courseRepository.DeleteCourseAsync(courseId);
+            var oldCourse = await _courseRepository.GetByIdAsync(courseId);
+            if (oldCourse == null
+                || oldCourse.Status == Constants.Enums.Status.Deleted)
+            {
+                throw new ArgumentException($"Course with ID {courseId} does not exist or has already been deleted.");
+            }
+            return await _courseRepository.DeleteAsync(oldCourse);
 
         }
 

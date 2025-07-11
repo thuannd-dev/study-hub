@@ -1,59 +1,45 @@
 ﻿using System.Linq.Expressions;
-using System.Runtime.InteropServices.Marshalling;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
-using TodoWeb.Application.Dtos.CourseModel;
 using TodoWeb.Application.Dtos.CourseStudentDetailModel;
 using TodoWeb.Application.Dtos.StudentModel;
 using TodoWeb.Application.Extensions;
 using TodoWeb.Domains.Entities;
 using TodoWeb.Infrastructures;
+using ToDoWeb.DataAccess.Repositories.GenericAccess;
+using ToDoWeb.DataAccess.Repositories.SchoolAccess;
 using ToDoWeb.DataAccess.Repositories.StudentAccess;
 
 namespace TodoWeb.Application.Services.Students
 {
 
-
     public class StudentService : IStudentService
     {
-        private const string STUDENT_KEY = "StudentKey";
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
-        private readonly IStudentRepository _studentRepository;
-        public StudentService(IApplicationDbContext context, IStudentRepository studentRepository,
+        private readonly IGenericRepository<Student> _studentRepository;
+        private readonly ISchoolRepository _schoolRepository;
+        public StudentService(IApplicationDbContext context, IGenericRepository<Student> studentRepository, ISchoolRepository schoolRepository,
             IMapper mapper, IMemoryCache cache)
         {
             _context = context;
             _mapper = mapper;
             _cache = cache;
             _studentRepository = studentRepository;
+            _schoolRepository = schoolRepository;
         }
-        //public IEnumerable<StudentViewModel> GetStudent(int? studentId)
-        //{
-        //    var query = _context.Students
-        //        .Where(student => student.Status != Constants.Enums.Status.Deleted)
-        //        .AsQueryable();//build leen 1 cau query
-        //    if (studentId.HasValue)
-        //    {
-        //        query = query.Where(x => x.Id == studentId);//add theem ddk 
-        //    }
-        //    query = query.Include(student => student.School);
-        //    var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
-        //    return result;
-        //}
 
-        public async Task<IEnumerable<StudentViewModel>> GetStudent(int? studentId)
+        public async Task<IEnumerable<StudentViewModel>> GetStudents(int? studentId)
         {
-            var students = await _studentRepository.GetStudentsAsync(studentId, student => student.School);
+            var students = await _studentRepository.GetAllAsync(studentId, student => student.School);
             return _mapper.Map<IEnumerable<StudentViewModel>>(students);
         }
 
-        public async Task<IEnumerable<StudentViewModel>?> GetStudents()
+        public async Task<IEnumerable<StudentViewModel?>> GetAllStudents()
         {
             //var data = _cache.Get<IEnumerable<StudentViewModel>>(STUDENT_KEY);
             //if (data == null)
@@ -64,24 +50,76 @@ namespace TodoWeb.Application.Services.Students
             //    _cache.Set(STUDENT_KEY, data, cacheOptions);
             //}
             //return data;
-            var data = await _cache.GetOrCreateAsync(STUDENT_KEY, async entry =>
-            {
-                entry.SlidingExpiration = TimeSpan.FromSeconds(30);//sliding cập nhật lại thời gian ở mỗi lần request
-                return await GetAllStudent();
-            });
-            return data;
+            //var data = await _cache.GetOrCreateAsync(STUDENT_KEY, async entry =>
+            //{
+            //    entry.SlidingExpiration = TimeSpan.FromSeconds(30);//sliding cập nhật lại thời gian ở mỗi lần request
+            //    return await GetStudents(null);
+            //});
+            //return data;
+            return await GetStudents(null);
         }
 
-
-        private async Task<IEnumerable<StudentViewModel>> GetAllStudent()
+        public async Task<int> Post(StudentViewModel student)
         {
-            //var query = _context.Students
-            //    .Where(student => student.Status != Constants.Enums.Status.Deleted)
-            //    .Include(student => student.School)
-            //    .AsQueryable();
-            //var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
-            //return result;
-            return await GetStudent(null);
+            //kiểm tra xem student id có bị trùng hay không
+            var dupID = await _studentRepository.GetByIdAsync(student.Id);
+            if (dupID != null || student.Id < 1)
+            {
+                throw new ArgumentException($"Student ID {student.Id} is invalid or already exists.");
+            }
+            var name = student.FullName.Split(' ');
+            //lấy school nhờ vào school name
+            var school = await _schoolRepository.GetSchoolsByNameAsync(student.SchoolName);
+
+            if (school == null)
+            {
+                throw new ArgumentException($"School with name {student.SchoolName} does not exist.");
+            }
+
+            var data = new Domains.Entities.Student
+            {
+                Id = student.Id,
+                FirstName = name[0],
+                LastName = string.Join(" ", name.Skip(1)),
+                SId = school.Id,
+                School = school,
+
+            };
+            //_cache.Remove(STUDENT_KEY);
+            return await _studentRepository.AddAsync(data);
+        }
+
+        public async Task<int> Put(StudentViewModel student)
+        {
+            //tìm student
+            var data = await _studentRepository.GetByIdAsync(student.Id);
+            if (data == null || data.Status == Constants.Enums.Status.Deleted)
+            {
+                throw new ArgumentException($"Student with ID {student.Id} does not exist or has been deleted.");
+            }
+            //kiểm tra xem người dùng có đưa đúng tên school
+            var school = await _schoolRepository.GetSchoolsByNameAsync(student.SchoolName);//không dùng where bởi vì tìm ra một list
+            if (school == null)
+            {
+                throw new ArgumentException($"School with name {student.SchoolName} does not exist.");
+            }
+            var name = student.FullName.Split(' ');
+            data.FirstName = name[0];
+            data.LastName = string.Join(" ", name.Skip(1));
+            data.SId = school.Id;
+            data.School = school;
+            data.Balance = student.Balance;
+            return await _studentRepository.UpdateAsync(data);
+        }
+
+        public async Task<int> Delete(int studentID)
+        {
+            var data = await _studentRepository.GetByIdAsync(studentID);
+            if (data == null)
+            {
+                throw new ArgumentException($"Student with ID {studentID} does not exist.");
+            }
+            return await _studentRepository.DeleteAsync(data);
         }
 
 
@@ -148,7 +186,8 @@ namespace TodoWeb.Application.Services.Students
             if (sortBy.IsNullOrEmpty())
             {
                 sortSelectors = [];
-            }else
+            }
+            else
             {
                 sortSelectors = sortBy.ToLower()
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -163,7 +202,7 @@ namespace TodoWeb.Application.Services.Students
                     })).ToArray();
             }
 
-            if(pageSize.HasValue && pageIndex == null)
+            if (pageSize.HasValue && pageIndex == null)
             {
                 pageIndex = 1;
             }
@@ -177,15 +216,16 @@ namespace TodoWeb.Application.Services.Students
                 .ApplyPaging(pageIndex, pageSize)
                 .AsQueryable();
             int totalPage;
-            if(pageSize == null)
+            if (pageSize == null)
             {
                 totalPage = 1;
-            }else
+            }
+            else
             {
                 var numberOfStudents = _context.Students.Count();
                 totalPage = (int)Math.Ceiling((double)numberOfStudents / (int)pageSize);
             }
-                
+
             var data = new StudentPagingViewModel
             {
                 Students = _mapper.ProjectTo<StudentViewModel>(query).ToList(),
@@ -210,120 +250,22 @@ namespace TodoWeb.Application.Services.Students
                     student => student.Age.ToString(),
                     student => student.School.Name,
                     student => student.Balance.ToString());
-            }else if (tokens.Length == 1)
+            }
+            else if (tokens.Length == 1)
             {
                 query = query.ApplySearch(searchTerm, student => student.Id.ToString(),
                     student => student.FirstName + " " + student.LastName,
                     student => student.Age.ToString(),
                     student => student.School.Name,
                     student => student.Balance.ToString());
-            }else
+            }
+            else
             {
                 return Enumerable.Empty<StudentViewModel>();
             }
 
-                var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
+            var result = _mapper.ProjectTo<StudentViewModel>(query).ToList();
             return result;
         }
-
-        public int Post(StudentViewModel student)
-        {
-            //kiểm tra xem student id có bị trùng hay không
-            var dupID = _context.Students.Find(student.Id);
-            if (dupID != null || student.Id < 1)
-            {
-                return -1;
-            }
-            var name = student.FullName.Split(' ');
-            //lấy school nhờ vào school name
-            var school = _context.School.FirstOrDefault(s => s.Name.Equals(student.SchoolName));//không dùng where bởi vì tìm ra một list
-
-            if (school == null)
-            {
-                return -1;
-            }
-
-            var data = new Domains.Entities.Student
-            {
-                Id = student.Id,
-                FirstName = name[0],
-                LastName = string.Join(" ", name.Skip(1)),
-                SId = school.Id,
-                School = school,
-
-            };
-            _context.Students.Add(data);
-            _context.SaveChanges();
-            _cache.Remove(STUDENT_KEY);
-            return data.Id;
-
-        }
-
-        public int Put(StudentViewModel student)
-        {
-            //tìm student
-            var data = _context.Students.Find(student.Id);
-            if (data == null || data.Status == Constants.Enums.Status.Deleted)
-            {
-                return -1;
-            }
-            var name = student.FullName.Split(' ');
-            //kiểm tra xem người dùng có đưa đúng tên school
-            var school = _context.School.FirstOrDefault(s => s.Name.Equals(student.SchoolName));//không dùng where bởi vì tìm ra một list
-            if (school == null)
-            {
-                return -1;
-            }
-            //data.FirstName = name[0];
-            //data.LastName = string.Join(" ", name.Skip(1));
-            //data.SId = school.Id;
-            //data.School = school;
-            //data.Balance = student.Balance;
-            _mapper.Map(student, data);
-            _context.SaveChanges();
-            return data.Id;
-        }
-
-        public int Delete(int studentID)
-        {
-            var data = _context.Students.Find(studentID);
-            if (data == null)
-            {
-                return -1;
-            }
-            _context.Students.Remove(data);
-            _context.SaveChanges();
-            return data.Id;
-        }
-
-        public StudentCourseDetailViewModel GetStudentDetails(int id)
-        {
-            var query = _context.Students
-                .Where(student => student.Status != Constants.Enums.Status.Deleted)
-                .Include(student => student.CourseStudent)
-                .ThenInclude(cs => cs.Course);
-
-            var student = query.FirstOrDefault(x => x.Id == id);//không dùng where bởi vì trả list
-            //excute lúc này luôn, excute khi mình chấm cái gì đó mà kéo dữ liệu từ database thì nó sẽ excute 
-            if (student == null)
-            {
-                return null;
-            }
-            //projectto dùng khi muốn map một câu query
-            //còn map thì dùng khi muốn map một object
-            return _mapper.Map<StudentCourseDetailViewModel>(student);
-
-            //return new StudentCourseDetailViewModel
-            //{
-            //    StudentId = student.Id,
-            //    StudentName = student.FirstName + " " + student.LastName,
-            //    Courses = student.CourseStudent.Select(cs => new CourseViewModel
-            //    {
-            //        CourseId = cs.CourseId,
-            //        CourseName = cs.Course.Name
-            //    }).ToList()
-            //};
-        }
-
     }
 }

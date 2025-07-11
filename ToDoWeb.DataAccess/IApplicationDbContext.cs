@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoWeb.Domains.Entities;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ToDoWeb.DataAccess.Entities;
 namespace TodoWeb.Infrastructures
 {
     public interface IApplicationDbContext
@@ -19,6 +20,7 @@ namespace TodoWeb.Infrastructures
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public EntityEntry<T> Entry<T>(T entity) where T : class;
+        //DbSet<T> Set<T>() where T : class, IEntity;
         public int SaveChanges();
         public Task<int> SaveChangesAsync();
 

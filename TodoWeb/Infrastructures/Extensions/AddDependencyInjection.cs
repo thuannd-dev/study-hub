@@ -1,7 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using TodoWeb.Application.Dtos.GuidModel;
 using TodoWeb.Application.MapperProfiles;
 using TodoWeb.Application.Middleware;
+using TodoWeb.Application.Services;
 using TodoWeb.Application.Services.CacheService;
 using TodoWeb.Application.Services.Courses;
 using TodoWeb.Application.Services.CourseStudents;
@@ -14,10 +17,13 @@ using TodoWeb.Application.Services.Questions;
 using TodoWeb.Application.Services.School;
 using TodoWeb.Application.Services.Students;
 using TodoWeb.Application.Services.Users;
-using TodoWeb.Application.Services;
-using TodoWeb.Application.Services.Users.GoogleService;
 using TodoWeb.Application.Services.Users.FacebookService;
+using TodoWeb.Application.Services.Users.GoogleService;
+using TodoWeb.Domains.Entities;
+using ToDoWeb.DataAccess.Repositories.CacheAccess;
 using ToDoWeb.DataAccess.Repositories.CourseAccess;
+using ToDoWeb.DataAccess.Repositories.GenericAccess;
+using ToDoWeb.DataAccess.Repositories.SchoolAccess;
 using ToDoWeb.DataAccess.Repositories.StudentAccess;
 
 namespace TodoWeb.Infrastructures.Extensions
@@ -57,7 +63,17 @@ namespace TodoWeb.Infrastructures.Extensions
             serviceCollection.AddSingleton<IGoogleCredentialService, GoogleCredentialService>();
             serviceCollection.AddSingleton<IFacebookCredentialService, FacebookCredentialService>();
             serviceCollection.AddScoped<ICourseRepository, CourseRepository>();
+            serviceCollection.AddScoped<ISchoolRepository, SchoolRepository>();
             serviceCollection.AddScoped<IStudentRepository, StudentRepository>();
+            serviceCollection.AddScoped(typeof(GenericRepository<>));
+            serviceCollection.AddScoped<IGenericRepository<Student>, CacheRepository<Student>>(provider =>
+            {
+                var dbContext = provider.GetRequiredService<ApplicationDbContext>();
+                var studentRepository = provider.GetRequiredService<GenericRepository<Student>>();
+                var cacheService = provider.GetRequiredService<IMemoryCache>();
+                return new CacheRepository<Student>(studentRepository, cacheService);
+            });
+            serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
         }
     }
