@@ -78,12 +78,12 @@ namespace TodoWeb.Application.Services.Courses
         //    return data.Id;
         //}
 
-        public async Task<int> Post(PostCourseViewModel course)
+        public async Task<int> PostAsync(PostCourseViewModel course)
         {
             var dupCourseName = await _courseRepository
                 .GetCourseByNameAsync(course.CourseName);
 
-            if (dupCourseName != null) return -1;
+            if (dupCourseName != null) throw new InvalidOperationException($"Course with name {course.CourseName} already exists.");
 
             var data = _mapper.Map<Course>(course);
 
@@ -117,7 +117,7 @@ namespace TodoWeb.Application.Services.Courses
             if (oldCourse == null 
                 || oldCourse.Status == Constants.Enums.Status.Deleted)
             {
-                return -1;
+               throw new InvalidOperationException($"Course with ID {courseViewModel.CourseId} does not exist or has already been deleted.");
             }
             var dupCourseName = await _courseRepository
                 .GetCourseByNameAsync(courseViewModel.CourseName!);
